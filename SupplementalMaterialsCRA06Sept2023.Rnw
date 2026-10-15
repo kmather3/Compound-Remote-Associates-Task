@@ -1,0 +1,3054 @@
+\documentclass{article}
+
+\input{textPreamble}
+
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\begin{document}
+
+%\setlength{\parindent}{0.0in}
+
+\title{--- Supplementary Materials ---\\[2pt]Scaling the assessment of associative ability:\\[2pt]Development and validation of a multiple-choice compound remote associates task}
+
+\begin{center}
+  {\bf Author names blinded for review}
+  %{\bf Kendall A. Mather,$^{1,^\star}$}
+  %{\bf Sara J. Weston,$^{1}$}
+  %{\bf \& David M. Condon$^{1}$}
+\end{center}
+
+\begin{center}
+\begin{affiliations}
+\noindent Affiliations blinded for review\\[-2pt]
+%\noindent 1. Psychology Department, University of Oregon, Eugene, Oregon, USA.\\[-2pt]
+%\noindent $^\star$  Correspondence about this Supplementary Materials file should be directed to \href{mailto:kmather3@uoregon.edu}{kmather3@uoregon.edu}.
+\end{affiliations}
+\end{center}
+
+\vskip -0.5cm
+
+%%%%%%%%%%%%%%%%%%
+%Add Breaking Line
+\begin{center}
+\linethickness{0.5mm}
+\line(1,0){300}
+\end{center}
+%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+\newpage
+
+\listoftables
+\newpage
+
+\listoffigures
+\newpage
+
+\section*{Instructions for reproducing the analyses}
+\addcontentsline{toc}{section}{Instructions for reproducing the analyses}
+
+In acknowledgement of recent calls for more transparent and fully reproducible research practices across virtually all sub-disciplines of psychology \citep{Klein:2018practical, Tackett:2019introduction, Mellor:2021improving, Grahe:2018another, Hagger:2019embracing, Gilmore:2020advancing, Condon:2017jz}, the supplemental materials for this project are extensive. To reproduce this file, download the zip folder under `OSF Storage' from the OSF project page (\href{tinyurl.com/2a8vx6n8}{tinyurl.com/2a8vx6n8}). Open it on your computer, making note of the location where it is stored (and relocating, if you choose). Once the data have been downloaded, it should be possible to reproduce the published results by using the \texttt{R} code in the ``.Rnw'' version of this document (this includes several analyses --- code chunks --- which have been suppressed in the compiled PDF version for the sake of readability).
+
+The code can either be executed manually in \texttt{R} or by compiling the file with \href{http://yihui.name/knitr/demo/manual/}{Knitr} \citep{Xie:2015vc} or \href{http://www.stat.uni-muenchen.de/~leisch/Sweave/Sweave-manual.pdf}{Sweave} \citep{Sweave} (some editing of the text passages may be required once the file is opened in RStudio or text editing software). The current PDF version was compiled using Knitr in \href{https://www.rstudio.com/}{RStudio} \citep{Gandrud:2015ux} on \today{}.  Those who do not want to use RStudio can open the .Rnw file with a text editor and run the code chunks that begin with ``$<<$'' and end with ``@''. The code mainly uses functions in base \texttt{R} \Sexpr{R.version$major}.\Sexpr{R.version$minor} \citep{R}, \Sexpr{packageDescription("psych")$Package} version \Sexpr{packageDescription("psych")$Version} \citep{Rpsych}, and a few other packages; the names and version numbers are listed in Table \ref{tab:Rpacks}.
+
+\begin{table}[htbp]\footnotesize
+\caption{\texttt{R} packages used and version numbers}
+\begin{center}
+\begin{tabular} {l r}
+\hline Package & Version \cr 
+\hline
+\Sexpr{packageDescription("corrplot")$Package} \citep{corrplot2021} & \Sexpr{packageDescription("corrplot")$Version} \cr
+\Sexpr{packageDescription("dplyr")$Package} \citep{Wickham:2021vf} & \Sexpr{packageDescription("dplyr")$Version} \cr
+\Sexpr{packageDescription("ggeffects")$Package} \citep{Ludecke:2018aa} & \Sexpr{packageDescription("ggeffects")$Version} \cr
+\Sexpr{packageDescription("gt")$Package} \citep{Iannone:2021wi} & \Sexpr{packageDescription("gt")$Version} \cr
+\Sexpr{packageDescription("gtsummary")$Package} \citep{gtsummary} & \Sexpr{packageDescription("gtsummary")$Version} \cr
+\Sexpr{packageDescription("kableExtra")$Package} \citep{Zhu:2021vy} & \Sexpr{packageDescription("kableExtra")$Version} \cr
+\Sexpr{packageDescription("knitr")$Package} \citep{Xie:2015vc} & \Sexpr{packageDescription("knitr")$Version} \cr
+\Sexpr{packageDescription("lme4")$Package} \citep{Bates:2015wl} & \Sexpr{packageDescription("lme4")$Version} \cr
+\Sexpr{packageDescription("mirt")$Package} \citep{Chalmers:2012ut} & \Sexpr{packageDescription("mirt")$Version} \cr
+\Sexpr{packageDescription("psych")$Package} \citep{Rpsych} & \Sexpr{packageDescription("psych")$Version} \cr
+\Sexpr{packageDescription("rio")$Package} \citep{Chan:2021tf} & \Sexpr{packageDescription("rio")$Version} \cr
+\Sexpr{packageDescription("stringr")$Package} \citep{Wickham:2019wo} & \Sexpr{packageDescription("stringr")$Version} \cr
+\Sexpr{packageDescription("tidyverse")$Package} \citep{Wickham:2019vq} & \Sexpr{packageDescription("tidyverse")$Version} \cr
+\Sexpr{packageDescription("xtable")$Package} \citep{Dahl:2016aa} & \Sexpr{packageDescription("xtable")$Version} \cr
+\hline
+\end{tabular}
+\end{center}
+\label{tab:Rpacks}
+\end{table}
+
+To get started reproducing the analyses in this file, open the file named `SupplementalMaterials.Rnw' (the title will include the last date of modification), and set your working directory to the location of the files. There are many ways to do this --- an easy one is to adjust line 97 (wdpath = ...) in the .Rnw file to match the location of the directory on your own computer.
+
+\newpage
+
+\begin{scriptsize}
+<<Prep1environment, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE>>= 
+rm(list=ls())
+
+suppressMessages(suppressWarnings(library(corrplot)))
+suppressMessages(suppressWarnings(library(dplyr)))
+suppressMessages(suppressWarnings(library(ggeffects)))
+suppressMessages(suppressWarnings(library(gridExtra)))
+suppressMessages(suppressWarnings(library(gt)))
+suppressMessages(suppressWarnings(library(gtsummary)))
+suppressMessages(suppressWarnings(library(kableExtra)))
+suppressMessages(suppressWarnings(library(knitr)))
+suppressMessages(suppressWarnings(library(lme4)))
+suppressMessages(suppressWarnings(library(mirt)))
+suppressMessages(suppressWarnings(library(psych)))
+suppressMessages(suppressWarnings(library(rio)))
+suppressMessages(suppressWarnings(library(stringr)))
+suppressMessages(suppressWarnings(library(tidyverse)))
+suppressMessages(suppressWarnings(library(xtable)))
+suppressMessages(suppressWarnings(library(ppcor)))
+suppressMessages(suppressWarnings(library(lavaan)))
+suppressMessages(suppressWarnings(library(janitor)))
+
+wdpath = "/Users/dmc174/Drive/MPSP/2021/CRA/supplement/"
+#wdpath = "/Users/kmather3/Desktop/Projects/CRA/OnlineSupplement/"
+
+#####
+# The lines above need to be altered to match your file directory structure
+#####
+
+options(width=115)
+
+set.seed(12345)
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Prep2functions, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+findcolnumber <-
+function(df, thecolumnname){
+      which(colnames(df) == thecolumnname)
+}
+
+##########
+
+findrownumber <-
+function(df, therowname){
+      which(rownames(df) == therowname)
+}
+
+##########
+
+gcQuiet <- function(quiet = TRUE, ...) {
+    if(quiet) invisible(gc()) else gc(...)
+}
+
+##########
+
+score_ICAR_IRT <- function(dataset, IRT_model, SE = TRUE, t_score = TRUE)
+{
+  factor = deparse(substitute(IRT_model))
+  factor = gsub("IRT_model_", "", factor)
+  items <- names(IRT_model@Data$mins)
+  data <- dataset
+  #check items in dataset
+  check_names = items %in% names(dataset)
+  # if missing all items, throw error 
+  if(sum(check_names) == 0) stop("No items for this factor found in the dataset.")
+  # if missing only some items, add those items as empty columns  
+  if(sum(check_names) < length(check_names)){
+    missing = items[!check_names]
+    data[,missing] = NA
+  }
+  data <- data[, items]
+  # find rows that are completely empty. these cause problems with mirt
+  empty_rows = which(is.nan(rowMeans(data, na.rm = TRUE)))
+  if(length(empty_rows) > 0) data = data[-empty_rows, ]
+  # Calculate IRT factor scores:
+  fscores <- fscores(
+    object = IRT_model,
+    response.pattern = data
+    )
+  fscores <- as.data.frame(fscores)
+  scores = fscores[,1]
+  if(t_score) scores = scores*10 + 50
+  if(t_score) fscores[,2] = fscores[,2]*10
+  if(length(empty_rows) > 0){
+    # if empty rows
+    dataset[-empty_rows, factor] = scores
+    dataset[-empty_rows, paste0("SE_", factor)] = fscores[,2]
+  }else
+  {
+    # If there are NOT empty rows:
+    dataset[, factor] = scores
+    dataset[, paste0("SE_", factor)] = fscores[,2]
+  }
+  return(dataset)
+}
+
+# Insert other custom functions here as needed.
+@
+\end{scriptsize}
+
+\section{Study 1}
+
+The following code loads the raw data from the \textbf{[blinded for review]} for this study. Most of the data for this study are available for download and re-use (see the compressed folder labeled 'Study1data' on OSF (\href{tinyurl.com/2a8vx6n8}{tinyurl.com/2a8vx6n8}) --- these include all data related to CRA/associative ability items. However, as the validation data are part of a much larger data collection project, some of these data have been withheld temporarily with the expectation that they will be made available subsequently (consistent with prior data sharing related policies for this project). The code below shows how the complete data were loaded, described, and reduced down to a more manageable size for saving and subsequent analyses/sharing. See \textbf{[blinded for review]} for a general overview of the data collection methods. Note that the data used in Study 1 was collected between 07 February 2017 and 25 June 2022.
+
+%blinded values are SAPA-Project with url and \citet{Condon:2017cs}
+
+\begin{scriptsize}
+<<Study1.1, eval=FALSE, echo=TRUE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+# First load the dataset used for the analyses.
+load(paste(wdpath, "data/study1/data07feb2017thru12dec2022.rdata", sep = ""))
+fullSample <- data07feb2017thru12dec2022
+rm(data07feb2017thru12dec2022)
+gcQuiet()
+
+dim(fullSample)
+count_answered <- describe(fullSample$count_answered)
+
+pdf(paste(wdpath, "figure/counts.pdf", sep = ""), onefile = TRUE)
+hist(fullSample$count_answered, 250, xlab="Items Answered", 
+     xlim = c(0,250), ylim = c(0,200000), main = "")
+dev.off()
+
+# subset the data
+fluencyAll <- table(fullSample$english)
+CRAdata <- fullSample %>% dplyr::filter(english == "Well" | english == "VeryWellFluentNative")
+dim(CRAdata)
+rm(fullSample)
+gcQuiet()
+
+# based on age
+CRAdata <- subset(CRAdata, CRAdata$age > 13)
+dim(CRAdata)
+
+# create table objects for printing further down
+countryCount <- table(CRAdata$country)
+ncountry = sum(countryCount != 0)
+USperc = as.numeric(countryCount["USA"])/nrow(CRAdata)
+
+ethnic <- data.frame(table(CRAdata$ethnic))
+ethnic$Percentage <- round(ethnic$Freq/sum(ethnic$Freq), 3)*100
+colnames(ethnic) <- c("Ethnicity/Race", "Participants", "Percentage")
+
+education <- data.frame(table(CRAdata$education))
+education$Percentage <- round(education$Freq/sum(education$Freq), 3)*100
+colnames(education) <- c("Educational Level", "Participants", "Percentage")
+
+jobstatus <- data.frame(table(CRAdata$jobstatus))
+jobstatus$Percentage <- round(jobstatus$Freq/sum(jobstatus$Freq), 3)*100
+colnames(jobstatus) <- c("Job Status", "Participants", "Percentage")
+
+IRTscores <- c("SPI_135_27_5_Impulsivity_score", "SPI_135_27_5_Adaptability_score",
+                "SPI_135_27_5_SelfControl_score", "SPI_135_27_5_Compassion_score", 
+                "SPI_135_27_5_Creativity_score", "SPI_135_27_5_Charisma_score", 
+                "SPI_135_27_5_Perfectionism_score", "SPI_135_27_5_Conformity_score", 
+                "SPI_135_27_5_Order_score", "SPI_135_27_5_EmotionalStability_score", 
+                "SPI_135_27_5_Irritability_score", "SPI_135_27_5_EmotionalExpressiveness_score", 
+                "SPI_135_27_5_Intellect_score", "SPI_135_27_5_Humor_score", 
+                "SPI_135_27_5_Sociability_score", "SPI_135_27_5_Conservatism_score", 
+                "SPI_135_27_5_ArtAppreciation_score", "SPI_135_27_5_Authoritarianism_score", 
+                "SPI_135_27_5_Trust_score", "SPI_135_27_5_Honesty_score", 
+                "SPI_135_27_5_AttentionSeeking_score", "SPI_135_27_5_WellBeing_score", 
+                "SPI_135_27_5_SensationSeeking_score", "SPI_135_27_5_Introspection_score", 
+                "SPI_135_27_5_Anxiety_score", "SPI_135_27_5_Industry_score", 
+                "SPI_135_27_5_EasyGoingness_score", "ICAR_LN_IRT_score", 
+                "ICAR_MR_IRT_score", "ICAR_R3D_IRT_score", 
+                "ICAR_VR_IRT_score", "ICAR_FA_IRT_score", 
+                "ICAR_PR_IRT_score")
+demoShort <- c("RID", "servertime", "age", "sex", "major", "occupation")
+Study1items <- c(demoShort, itemsICAR, itemsSPI, IRTscores)
+
+CRAdata <- subset(CRAdata, select = c(Study1items))
+dim(CRAdata)
+
+# load the item information with the text and labels
+load(paste(wdpath, "data/CRAitemContent.rdata", sep = ""))
+# and a file used to describe the sample by country
+load(paste(wdpath, "data/study1/countrykey.rdata", sep = ""))
+
+CRAitemData <- subset(CRAdata, select = c(servertime, q_14003:q_14466))
+save(CRAitemData, CRAitemContent, file = paste(wdpath, "data/study1/CRAdataStudy1version1.rdata", sep = ""))
+
+save(count_answered, countryCount, countrykey, CRAdata, CRAitemContent, ethnic, education, jobstatus, 
+     fluencyAll, itemsSPI, jobstatus, keys.list, ncountry, USperc, 
+     file = paste(wdpath, "data/study1/CRAdataStudy1version2.rdata", sep = ""))
+@
+\end{scriptsize}
+
+\subsection{Descriptive statistics for participants in the sample}
+
+The code below generates descriptive statistics for the sample. Some of the code in this sub-section (for reproducing the descriptive statistics) and in sub-section 1.7 (for identifying the correlations with other traits) requires access to the complete data file (version 2) ; the remaining code is reproducible with version 1 only.
+
+\begin{scriptsize}
+<<Study1.2, eval=TRUE, echo=TRUE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+load(paste(wdpath, "data/study1/CRAdataStudy1version2.rdata", sep = ""))
+
+CRAdata <- CRAdata[CRAdata$servertime < as.POSIXct("2022-06-26 12:00:00", tz="UTC"),]
+dim(CRAdata)
+
+occupation = table(CRAdata$occupation)
+occupations <- data.frame(sort(occupation, decreasing = TRUE))
+colnames(occupations) <- c("Jobs", "Participants")
+nocc = sum(occupation != 0)
+pocc = sum(table(CRAdata$occupation))
+
+ages <- describe(CRAdata$age)
+
+sex.t = CRAdata %>% 
+  group_by(sex) %>%
+  dplyr::summarize(count = n()) %>%
+  mutate(percent = 100*count/sum(count))
+
+@
+\end{scriptsize}
+
+The total sample included \Sexpr{prettyNum(count_answered$n, big.mark=",", scientific=F)} participants who completed all or part of the full inventory in exchange for information about their personalities. Figure \ref{fig:counts} provides a distribution of the number of responses provided by each participant (\textit{m} = \Sexpr{round(count_answered$mean, 1)}; \textit{sd} = \Sexpr{round(count_answered$sd, 1)}; \textit{Mdn} = \Sexpr{count_answered$median}).
+
+From the full sample, participants were excluded if they self-reported that they did not speak English well (n = \Sexpr{prettyNum(as.numeric(fluencyAll["NotWell"]), big.mark=",", scientific=F)}) or at all (i.e., needed translation; n = \Sexpr{prettyNum(as.numeric(fluencyAll["NotAtAllNeedTranslation"]), big.mark=",", scientific=F)}), or if they did not indicate their English language fluency (n = \Sexpr{prettyNum(as.numeric(count_answered$n-sum(fluencyAll)), big.mark=",", scientific=F)}). This left a sample of \textbf{\Sexpr{prettyNum(nrow(CRAdata), big.mark=",", scientific=F)} participants} who spoke English well (n = \Sexpr{prettyNum(as.numeric(fluencyAll["Well"]), big.mark=",", scientific=F)}) or very well/fluent (n = \Sexpr{prettyNum(as.numeric(fluencyAll["VeryWellFluentNative"]), big.mark=",", scientific=F)}). This sample had an average age of \Sexpr{round(ages$mean, 1)} (\textit{sd} = \Sexpr{round(ages$sd, 1)}; \textit{Mdn} = \Sexpr{ages$median}; minimum = \Sexpr{ages$min}; maximum = \Sexpr{ages$max}). Approximately \Sexpr{round(sex.t$percent[2])}\% self-identified as female, \Sexpr{round(sex.t$percent[1])}\% as male, and \Sexpr{round(sex.t$percent[3],2)}\% as other (\Sexpr{round(sex.t$percent[4],2)}\% did not respond to the item about gender). 
+
+\begin{figure}
+\begin{floatrow}
+\ffigbox{\includegraphics[width=.5\textwidth]{figure/counts.pdf}}{\caption{Distribution of responses per participant}\label{fig:counts}}
+\end{floatrow}
+\end{figure}
+
+With respect to geographic distribution, \Sexpr{ncountry} nation states were represented and approximately \Sexpr{round(USperc*100, 2)}\% of respondents were from the U.S. This included representation from all regions of the U.S. at a level similar to the distribution of residents, as indicated by moderate to high correlations between the distribution of the sample and the distribution of U.S. population (.47 using smaller 5 digit ZIP code areas and .81 using larger 3 digit ZIP code areas). Figures \ref{fig:USmap} and \ref{fig:SAPAmap} show the geographic distribution of the sample within the U.S. and by country, respectively. Table \ref{tab:countryCount1500} shows the number of respondents per country for those with more than 1,500 respondents.
+
+\begin{figure}
+\begin{floatrow}
+\ffigbox{\includegraphics[width=.45\textwidth]{figure/USmap.png}}{\caption{Full sample by U.S. Zip Code Tabulation Area}\label{fig:USmap}}
+\ffigbox{\includegraphics[width=.45\textwidth]{figure/sapamap.png}}{\caption{Full sample by country}\label{fig:SAPAmap}}
+\end{floatrow}
+\end{figure}
+
+\begin{scriptsize}
+<<Study1.3, eval=TRUE, echo=FALSE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+countries <- data.frame(sort(countryCount, decreasing = TRUE))
+colnames(countries) <- c("ISO3", "Participants")
+topCountries <- subset(countries, countries$Participants > 1500)
+
+countrykey1500 <- subset(countrykey, ISO3 %in% topCountries$ISO3)
+
+topCountriesKeyed <- merge(topCountries, countrykey1500, by="ISO3", all.x=TRUE)
+topCountriesKeyed <- subset(topCountriesKeyed, select = c(allcountrynames, Participants, popRank, EnglishPopRank))
+colnames(topCountriesKeyed) <- c("Country", "Participants", "Population Rank", "English Speaking Rank")
+topCountriesKeyed <- topCountriesKeyed[with(topCountriesKeyed, order(-Participants)),]
+rownames(topCountriesKeyed) <- topCountriesKeyed[,1]
+
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(topCountriesKeyed))
+comment$command <- c(paste("\\hline\n",
+                          "\\multicolumn{4}{l}{Note: Ranks based on 2022 estimates from Wikipedia.}\\\\\n", sep = ""))
+
+options(xtable.NA.string = "NA")
+topCountry <- xtable(topCountriesKeyed[,c(2:4)], digits=0, caption='Countries with 1500 or more respondents', label='tab:countryCount1500', align= c("p{3.5cm}", "R{1.5cm}", "R{1.5cm}", "R{1.5cm}"))
+
+print(topCountry, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+@
+\end{scriptsize}
+
+Tables \ref{tab:ethnic} and \ref{tab:education} show the distribution of the sample by ethnicity/race and educational attainment level, respectively. Table \ref{tab:job} shows the distribution of the sample by employment status. Participants who reported being employed or retired were prompted to indicate their occupation; \Sexpr{prettyNum(pocc, big.mark=",")} participants responded to this prompt, representing a total of \Sexpr{prettyNum(nocc, big.mark=",")} jobs.
+
+\begin{scriptsize} \begin{table}[htp]\caption{Race/Ethnicity among U.S. participants in the Study 1 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Ethnicity  &  Participants & Percentage\cr 
+  \hline 
+White  & \Sexpr{prettyNum(ethnic[13,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[13,3]}\% \cr 
+African American  & \Sexpr{prettyNum(ethnic[1,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[1,3]}\% \cr
+Two Or More Ethnicities & \Sexpr{prettyNum(ethnic[18,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[18,3]}\% \cr 
+Mexican  & \Sexpr{prettyNum(ethnic[9,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[9,3]}\% \cr 
+Other Hispanic  & \Sexpr{prettyNum(ethnic[8,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[8,3]}\% \cr 
+Chinese   & \Sexpr{prettyNum(ethnic[2,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[2,3]}\% \cr 
+Other Asian  & \Sexpr{prettyNum(ethnic[7,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[7,3]}\% \cr 
+Puerto Rican  & \Sexpr{prettyNum(ethnic[10,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[10,3]}\% \cr 
+Indian  & \Sexpr{prettyNum(ethnic[6,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[6,3]}\% \cr 
+Filipino  & \Sexpr{prettyNum(ethnic[5,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[5,3]}\% \cr 
+Native American  & \Sexpr{prettyNum(ethnic[11,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[11,3]}\% \cr 
+Korean  & \Sexpr{prettyNum(ethnic[4,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[4,3]}\% \cr 
+Cuban  & \Sexpr{prettyNum(ethnic[16,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[16,3]}\% \cr
+Japanese  & \Sexpr{prettyNum(ethnic[3,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[3,3]}\% \cr 
+Other Pacific Islander  & \Sexpr{prettyNum(ethnic[12,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[12,3]}\% \cr 
+Native Hawaiian  & \Sexpr{prettyNum(ethnic[17,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[17,3]}\% \cr 
+Alaskan Native  & \Sexpr{prettyNum(ethnic[15,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[15,3]}\% \cr 
+Other  & \Sexpr{prettyNum(ethnic[14,2], big.mark=",", scientific=F)} & \Sexpr{ethnic[14,3]}\% \cr 
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:ethnic}
+\end{table} 
+\end{scriptsize}
+
+
+\begin{scriptsize} \begin{table}[htp]\caption{Educational attainment level in Study 1 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Educational Level  &  Participants & Percentage \cr 
+  \hline 
+Less than 12 years  & \Sexpr{prettyNum(education[1,2], big.mark=",", scientific=F)} & \Sexpr{education[1,3]}\% \cr 
+High school graduate  & \Sexpr{prettyNum(education[2,2], big.mark=",", scientific=F)} & \Sexpr{education[2,3]}\% \cr 
+Currently in college/university  & \Sexpr{prettyNum(education[3,2], big.mark=",", scientific=F)} & \Sexpr{education[3,3]}\% \cr 
+Some college/university, but did not graduate  & \Sexpr{prettyNum(education[4,2], big.mark=",", scientific=F)} & \Sexpr{education[4,3]}\% \cr 
+Associate Degree & \Sexpr{prettyNum(education[5,2], big.mark=",", scientific=F)} & \Sexpr{education[5,3]}\% \cr 
+College/university degree  & \Sexpr{prettyNum(education[6,2], big.mark=",", scientific=F)} & \Sexpr{education[6,3]}\% \cr 
+Currently in graduate or professional school  & \Sexpr{prettyNum(education[7,2], big.mark=",", scientific=F)} & \Sexpr{education[7,3]}\% \cr 
+Graduate or professional school degree  & \Sexpr{prettyNum(education[8,2], big.mark=",", scientific=F)} & \Sexpr{education[8,3]}\% \cr 
+ \hline 
+\end{tabular}
+\end{center}
+\label{tab:education}
+\end{table} 
+\end{scriptsize}
+
+
+\begin{scriptsize} \begin{table}[htp]\caption{Employment status in the Study 1 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Employment Status &  Participants & Percentage \cr 
+  \hline 
+Currently a student  & \Sexpr{prettyNum(jobstatus[1,2], big.mark=",", scientific=F)} & \Sexpr{jobstatus[1,3]}\% \cr 
+Employed  & \Sexpr{prettyNum(jobstatus[5,2], big.mark=",", scientific=F)} & \Sexpr{jobstatus[5,3]}\% \cr 
+Not employed  & \Sexpr{prettyNum(jobstatus[2,2], big.mark=",", scientific=F)} & \Sexpr{jobstatus[2,3]}\% \cr 
+Not employed, seeking work  & \Sexpr{prettyNum(jobstatus[3,2], big.mark=",", scientific=F)} & \Sexpr{jobstatus[3,3]}\% \cr 
+Homemaker  & \Sexpr{prettyNum(jobstatus[4,2], big.mark=",", scientific=F)} & \Sexpr{jobstatus[4,3]}\% \cr 
+Retired  & \Sexpr{prettyNum(jobstatus[6,2], big.mark=",", scientific=F)} & \Sexpr{jobstatus[6,3]}\% \cr 
+ \hline 
+\end{tabular}
+\end{center}
+\label{tab:job}
+\end{table} 
+\end{scriptsize}
+
+\clearpage
+
+\subsection{Descriptive statistics for the 67 new CRA items}
+
+Next, we begin examining the properties of the CRA items. It is important to note that these items were administered infrequently due to the planned missingness design of the data collection, so we need to better specify the descriptive statistics of the CRA items by themselves. First, we subset the data, describe it, and then look at the number of pairwise administrations. This latter characteristic is important for subsequent evaluation of the structure of the set. We also get the tetrachoric correlation matrix at this stage; note that smoothing was necessary as the matrix was not positive definite.
+
+\begin{scriptsize}
+<<Study1.4, eval=TRUE, echo=TRUE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+load(paste(wdpath, "data/study1/CRAdataStudy1version1.rdata", sep = ""))
+
+CRAitemData <- CRAitemData[CRAitemData$servertime < as.POSIXct("2022-06-26 12:00:00", tz="UTC"),]
+dim(CRAitemData)
+
+CRAitemSet67 <- subset(CRAitemData, select = c(q_14003:q_14197))
+dim(CRAitemSet67) # only the 67 item subset being validated
+
+descCRAitems <- psych::describe(CRAitemSet67)
+rm(CRAdata)
+gcQuiet()
+
+administrations <- describe(descCRAitems$n)
+
+pwiseAdminsCRAitems <- pairwiseCount(CRAitemSet67, diagonal = TRUE)
+pwiseAdminsCRAitemsVec <- as.vector(pwiseAdminsCRAitems[lower.tri(pwiseAdminsCRAitems)])
+pwiseAdminsCRAitemsDescribe <- psych::describe(pwiseAdminsCRAitemsVec)
+n_obs <- pwiseAdminsCRAitemsDescribe$mean
+
+tetchor_matrix67 <- tetrachoric(CRAitemSet67, smooth = TRUE)
+cor_matrix67 <- tetchor_matrix67$rho
+
+@
+\end{scriptsize}
+
+The 67 items in this set have been administered an average of \Sexpr{prettyNum(round(administrations$mean, 0), big.mark=",", scientific=F)} times each (\textit{sd} = \Sexpr{prettyNum(round(administrations$sd, 1), big.mark=",", scientific=F)}; \textit{Mdn} = \Sexpr{prettyNum(administrations$median, big.mark=",", scientific=F)}), with a minimum of \Sexpr{prettyNum(administrations$min, big.mark=",", scientific=F)}. However, these values are vastly larger than the pairwise administrations among all \Sexpr{prettyNum(((67*67)-67)/2, big.mark=",", scientific=F)} possible pairs, as these had a mean of only \Sexpr{prettyNum(round(pwiseAdminsCRAitemsDescribe$mean, 1), big.mark=",", scientific=F)} (\textit{sd} = \Sexpr{prettyNum(round(pwiseAdminsCRAitemsDescribe$sd, 1), big.mark=",", scientific=F)}; \textit{Mdn} = \Sexpr{prettyNum(pwiseAdminsCRAitemsDescribe$median, big.mark=",", scientific=F)}). This circumstance --- much higher administration counts per item than pairwise administrations --- is due to the relatively small number of items administered to each participant (often only two). The data collection protocol on the \textbf{[blinded for review]} only dedicates about 10\% of survey content to cognitive abilities assessment, and much of this is taken up by the administration of previously validated scales, i.e., the four original item types described in \citet{Condon:14}. Importantly, the evaluations of validity reported in later sections of this work (e.g., discriminant and convergent validity) benefit from the statistical power of the larger number of individual administrations against other criteria. Evaluations of the correlational structure among items do not, and this prompts consideration of whether the current number of observations is adequate for the structural evaluations conducted here.
+
+Various ``rules of thumb'' have been proposed regarding statistical power for exploratory factor analysis; see \citet{Kyriazos:2018} for an excellent summary. In addition to the typical considerations affecting power (e.g., thresholds for alpha and beta, anticipated effect sizes, and number of observations), issues affecting power in EFA include the number of measured variables, the number of dimensions being extracted (i.e., the factors or components), and the observed orientation of the variables to those dimensions (i.e., the communalities and the loadings). This complexity contributes to the appeal of using generic rules to estimate power for EFA, but it should be noted that these rules are often quite arbitrary. The categories provided by Comrey and colleagues \citep{Comrey:73}, for example, are overly simplistic --- they suggest grading sample sizes independent of contextual factors: very poor (N=50), poor (N=100), fair (N=200), good (N=300), very good (N=500), and excellent (N=1,000).
+
+More nuanced rules are often based on detailed simulations \citep{Dimitrov:2014, Guadagnoli:1988}. The most applicable for EFA specifically are framed around the ratio of observations (N) to variables \citep[p;][]{Nunnally:1994, Dimitrov:2014}. Recommendations range from N/p = 1 for larger samples to 5 \citep{Gorsuch:83} or even 10 \citep{Nunnally:1994, Wang:2019} when samples sizes are small (i.e., Ns of roughly 100 might only be considered marginally adequate for small numbers of variables). A particularly useful recommendation from \citet{Tinsley:1987} proposes 5 to 10 observations per variable up to N=300, beyond which this proportion can be relaxed \citep{DeVellis:2021, Kyriazos:2018}. The data used here comfortably exceeds these recommendations --- again, the mean and median are \Sexpr{prettyNum(round(pwiseAdminsCRAitemsDescribe$mean, 1), big.mark=",", scientific=F)} and \Sexpr{prettyNum(round(pwiseAdminsCRAitemsDescribe$median, 2), big.mark=",", scientific=F)}, respectively, and the minimum is \Sexpr{prettyNum(round(pwiseAdminsCRAitemsDescribe$min, 2), big.mark=",", scientific=F)}.
+
+\subsection{Dimensionality of the 67 new CRA items}
+
+The next step is to evaluate the unidimensionality of the items, as this is a key assumption to fulfill when using item response theory-based procedures (and we want to use these in subsequent analyses, if possible). We begin by calling \texttt{vss()} to generate several test statistics for various factor solutions.
+
+\begin{scriptsize}
+<<Study1.5, eval=TRUE, echo=TRUE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+fitstats <- psych::vss(cor_matrix67, n = 4, n.obs = n_obs, rotate = "oblimin", diagonal = FALSE, fm = "mle", plot = FALSE)
+
+fit_table <- fitstats$vss.stats
+
+fit_table <- fit_table %>% 
+  dplyr::mutate(Factors = seq(1:4)) %>% # Look at fit indices for 1-4 factor solutions
+  relocate(Factors)
+
+fit_table <- fit_table %>%
+  dplyr::select(Factors, chisq, fit, RMSEA, BIC, SRMR) # Selecting preregistered fit indices
+
+fit_table <- fit_table %>%
+  mutate(Map = fitstats$map) %>%
+  dplyr::rename(VSS = fit,
+         Chisq = chisq)
+
+# suppressMessages(suppressWarnings(fa.parallel(cor_matrix67)))
+# Parallel analysis suggests that the number of factors =  2
+# and the number of components =  1 
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study1.6, eval=TRUE, echo=FALSE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(fit_table))
+comment$command <- c(paste("\\hline\n",
+                          "\\multicolumn{7}{l}{Note: VSS shown here reflects complexity of 1. SRMR is the standardized root mean square residual.}\\\\\n", "\\multicolumn{7}{l}{MAP is Velicer's Minimum Average Partial criterion.}\\\\\n", sep = ""))
+
+options(xtable.NA.string = "NA")
+fit_table1 <- xtable(fit_table[,1:ncol(fit_table)], digits=0, caption='Fit indices for the 1 to 4 factor solutions with 67 items', label='tab:fit', align= c("R{1.5cm}", "R{1.5cm}", "R{1.5cm}", "R{1.5cm}", "R{1.5cm}", "R{1.5cm}", "R{1.5cm}", "R{1.5cm}"))
+names(fit_table1) <- c("Factors", "Chi Square", "VSS", "RMSEA", "BIC", "SRMR", "MAP")
+digits(fit_table1) <- c(0,0,0,2,2,0,3,3)
+
+print(fit_table1, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', include.rownames=FALSE, floating = TRUE)
+@
+\end{scriptsize}
+
+We evaluate the fit for solutions with up to 4 factors, and then create Table \ref{tab:fit} with the output. Table \ref{tab:fit} displays model fit indices for solutions with one through four factors. The optimal number of factors is inconsistent across fit indices. Support for the single-factor model is indicated by the VSS (Very Simple Structure) criterion, which suggests that extracting one factor yields the most interpretable results. The SRMR suggests at least adequate fit (i.e., less than .08) for all solutions. The chi-square value, BIC (Bayesian Information Criterion), and MAP (Velicer’s Minimal Average Partial) criterion were minimized in models with a higher number of factors. RMSEA values were high for all models, far exceeding the standard threshold for adequate fit (i.e., of less than .08). Reasons for notably poor fit across all solutions as indicated by the RMSEA are unclear, but recent evidence suggests that the RMSEA --— in addition to other popular fit indices --— is ill-suited for use in exploratory factor analysis because it almost always leads to over-factoring \citep{Montoya:2021}. Consequently, RMSEA values are reported for the purpose of adhering to the preregistered plan of analysis but are not used to guide interpretation regarding the factor structure of the CRA items. Figure \ref{fig:faparallel} shows the results of parallel analysis suggesting two factors or one principal component.
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.45\textwidth]{figure/faparallel.png}}{\caption{Parallel analysis based on the 67 CRA items using principal components (PC) and factor analysis (FA)}\label{fig:faparallel}}
+\end{figure}
+
+The \texttt{omega()} function in the psych package is used to show coefficient $\omega_{h}$ and (for internal consistency) $\alpha$ and $\omega_{t}$.
+
+\begin{scriptsize}
+<<Study1.7, eval=TRUE, echo=TRUE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+omega_results <- psych::omega(cor_matrix67, plot = FALSE)
+omega.h <- round(omega_results$omega_h,2)
+omega.alpha <- round(omega_results$alpha,2)
+omega.t <- round(omega_results$omega.tot,2)
+@
+\end{scriptsize}
+
+The items have high internal consistency in this data set ($\alpha$ = \Sexpr{omega.alpha}; $\omega_{t}$ = \Sexpr{omega.t}). Similarly, the omega general value ($\omega_{h}$ = \Sexpr{omega.h}) suggests strong unidimensionality in the CRA items. To help visualize this, the next code chunk plots the correlations among items after they have been sorted by factor loading, with a one factor model specified (sorting by factor loading is only done to organize the presentation of items). We also extract the empirically-observed confidence intervals around the tetrachoric correlations here. 
+
+\begin{scriptsize}
+<<Study1.8, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+CRA_fa <- suppressMessages(suppressWarnings(fa(cor_matrix67, nfactors = 1)))
+CRA_fa_sort <- fa.sort(CRA_fa)
+rows_CRA <- rownames(CRA_fa_sort$loadings)
+
+cor_matrix67_plot <- cor_matrix67[rows_CRA, rows_CRA]
+
+min_cor_value <- min(cor_matrix67)
+avg_cor_value <- mean(cor_matrix67)
+
+CIs <- corCi(cor_matrix67, n.iter=1000, n=pwiseAdminsCRAitemsDescribe$mean)
+CIs2 <- as.data.frame(CIs$r.ci)
+CIs2$range <- CIs2$upper-CIs2$lower
+CIs2$sig <- ifelse(CIs2$range > CIs2$upper, 0, 1)
+CIs2$sigNeg <- ifelse(CIs2$upper < 0, 1, 0)
+
+maxCI <- max(CIs2$range)
+minCI <- min(CIs2$range)
+meanCI <- mean(CIs2$range)
+overlappingZero <- nrow(CIs2)-sum(CIs2$sig)
+sigNeg <- sum(CIs2$sigNeg)
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study1.9, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+file_path = paste(wdpath, "figure/singlefactorcors67.png", sep = "")
+png(height=1800, width=1800, file=file_path, type = "cairo")
+corrplot(cor_matrix67_plot, method = "color", tl.col = "black",
+         bg = "White", tl.srt = 0, type = "full", title = "",
+         col = COL2('RdBu',200), tl.pos = 'n')
+dev.off()
+
+file_path= paste(wdpath, "figure/singlefactorcors67.eps", sep="")
+setEPS()
+postscript(height=200, width=200, file=file_path)
+corrplot(cor_matrix67_plot, method = "color", tl.col = "black",
+         bg = "White", tl.srt = 0, type = "full", title = "",
+         col = COL2('RdBu',200), tl.pos = 'n')
+dev.off()
+
+@
+\end{scriptsize}
+
+The correlations are shown in Figure \ref{fig:singlefactorcors67}. The plot provides clear evidence of a strong general factor (average \textit{r} = \Sexpr{round(avg_cor_value,3)}), though there are a small number of correlations between items with point estimates below 0 --- as low as \Sexpr{round(min_cor_value,3)} --- indicated with pale red tones in the lower right corner of the figure. The range of the 95\% confidence intervals around these correlations (i.e., the range from the high to low end of the confidence interval) had a mean of \Sexpr{round(meanCI,3)} (minimum $=$ \Sexpr{round(minCI,3)} and maximum = \Sexpr{round(maxCI,3)}). Of the 2,211 pairwise correlations, \Sexpr{overlappingZero} had confidence intervals overlapping with zero; \Sexpr{sigNeg} of the remaining \Sexpr{prettyNum(2211-overlappingZero, big.mark=",", scientific=F)} had point estimates below 0. The correlations among these ``significantly'' negative associations are \Sexpr{round(cor_matrix67["q_14058","q_14082"],2)} (q\textunderscore 14058 and q\textunderscore 14082) and \Sexpr{round(cor_matrix67["q_14096","q_14148"],2)} (q\textunderscore 14096 and q\textunderscore 14148). The content of these items can be seen in Table \ref{tab:parameters}. It is unclear why these are negatively associated. One possibility is that there is a cohort effect that makes knowledge/familiarity of the words in each pair relatively incompatible. A second possibility is that one (or both) of the items in each pair prompts a near alternative among the compound words in the matching item. Further research into this topic is warranted, but none of these items are dropped as they demonstrate adequate psychometric properties in other respects.
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.75\textwidth]{figure/singlefactorcors67.png}}{\caption{Correlations among all 67 CRA items sorted by general factor loadings.}\label{fig:singlefactorcors67}}
+\end{figure}
+
+\clearpage
+
+\subsection{IRT-based analyses of the 67 new CRA items}
+
+Supported by the evidence of unidimensionality, the item pool was evaluated using item response theory procedures. In the chunk below, we extract the IRT parameters, plot the information curves for the items and the set, and evaluate the range of item difficulties.
+
+\begin{scriptsize}
+<<Study1.10, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+# get the IRT model of the response data
+IRT_model <- suppressWarnings(mirt(CRAitemSet67, 1, itemtype = "2PL", constrain = NULL))
+summary(IRT_model)
+
+# table the item parameters
+# note that you must specify IRTpars=TRUE to get difficulties instead of easiness
+IRT_model_parameters <- coef(IRT_model, IRTpars=TRUE, simplify = TRUE)
+CRAparameters <- IRT_model_parameters$items[,1:2]
+CRAparameters <- data.frame(CRAparameters, descCRAitems$mean, descCRAitems$se, descCRAitems$n)
+colnames(CRAparameters) <- c("disc", "diff", "mean", "se", "n")
+
+CRAparametersSortedByDisc <- CRAparameters[order(CRAparameters[,"disc"]),]
+CRAparametersSortedByDiff <- CRAparameters[order(CRAparameters[,"diff"]),]
+CRAparametersSortedByMean <- CRAparameters[order(CRAparameters[,"mean"]),]
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study1.11, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# plot the item characteristic curves for all items separately and together
+
+file_path = paste(wdpath, "figure/ICCs67.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model, type = 'trace', facet_items = TRUE)
+dev.off()
+
+file_path= paste(wdpath, "figure/ICCs67.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model, type = 'trace', facet_items = TRUE)
+dev.off()
+
+file_path = paste(wdpath, "figure/ICCscombined67.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model, type = 'trace', facet_items = FALSE, auto.key = FALSE)
+dev.off()
+
+file_path= paste(wdpath, "figure/ICCscombined67.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model, type = 'trace', facet_items = TRUE)
+dev.off()
+
+panel1 <- findcolnumber(CRAitemSet67, "q_14043")
+panel2 <- findcolnumber(CRAitemSet67, "q_14072")
+panel3 <- findcolnumber(CRAitemSet67, "q_14048")
+panel4 <- findcolnumber(CRAitemSet67, "q_14031")
+
+file_path = paste(wdpath, "figure/discriminations67.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model, type = 'trace', which.items = c(panel3, panel4, panel1, panel2), facet_items = TRUE)
+dev.off()
+
+file_path= paste(wdpath, "figure/discriminations67.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model, type = 'trace', which.items = c(panel3, panel4, panel1, panel2), facet_items = TRUE)
+dev.off()
+
+@
+\end{scriptsize}
+
+Figure \ref{fig:ICCscombined} shows the probability functions --- that is, the probability of correct/incorrect responses across the range of difficulties --- for all the items together in one plot. Figure \ref{fig:ICCs} shows the probability functions for all 67 items separately and labeled. Together, these figures are very useful for evaluating the properties of the CRA items individually and as a set.
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.75\textwidth]{figure/ICCscombined67.png}}{\caption{Item probability functions for all 67 CRA items together.}\label{fig:ICCscombined}}
+\end{figure}
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.95\textwidth]{figure/ICCs67.png}}{\caption{Item probability functions for all 67 CRA items.}\label{fig:ICCs}}
+\end{figure}
+
+Figure \ref{fig:ICCscombined} shows that most items have difficulties greater than zero (\textit{m} = \Sexpr{round(mean(CRAparametersSortedByDisc[,"diff"]),2)}; \textit{Mdn} = \Sexpr{round(median(CRAparametersSortedByDisc[,"diff"]),2)}). As mentioned above, difficulty values (in this model) reflect the location of the intercept where the probabilities of correct and incorrect responses are equal. Only \Sexpr{length(CRAparametersSortedByDiff$diff[CRAparametersSortedByDiff$diff<0])} of the 67 items have difficulty coefficients below zero, and this indicates that most items are generally quite hard. Note that the mean proportion of correct responses for each item is highly (negatively) correlated with item difficulty (\textit{r} = \Sexpr{round(cor(CRAparametersSortedByDiff$diff, CRAparametersSortedByDiff$mean),2)}), as expected. Given the content of these items, moderately high difficulties are desirable, but items with excessively high difficulty would not be particularly useful as there will be little variance across respondents (nearly all respondents fail to identify the correct answer). There are two items with difficulties more than 4 standard deviations above the mean ability level: item q\textunderscore 14043 (difficulty = \Sexpr{round(CRAparametersSortedByDisc["q_14043","diff"],2)}) and item q\textunderscore 14175 (difficulty = \Sexpr{round(CRAparametersSortedByDisc["q_14175","diff"],2)}).
+
+Figures \ref{fig:ICCscombined} and \ref{fig:ICCs} also demonstrate that most of the items are adequately discriminant (\textit{m} = \Sexpr{round(mean(CRAparametersSortedByDisc[,"disc"]),2)}; \textit{Mdn} = \Sexpr{round(median(CRAparametersSortedByDisc[,"disc"]),2)}), though there are a few exceptions. This implies that the items are able to discriminate well between individuals with relatively similar levels of associative ability around the difficulty intercept, as a small increase in associative ability in this range substantially increases the probability of correct responding. This is depicted visually by the slope of the item probability functions. Of the 67 items, two have discrimination parameters near .5, a value that is commonly deemed a lower bound of acceptability \citep{An:2014, Debeer:2013}. Note that it may also be reasonable to drop a few other items with relatively low discriminations, but there is a case to be made for keeping items that cover a wide range of discriminations, especially if they are all above an acceptable threshold \citep{Cheng:2015}. This argument mainly rests on the increased flexibility provided by a diverse item set for computer adaptive testing applications.
+
+For reference, Figure \ref{fig:discriminations} highlights the discrimination for several items as examples. Item q\textunderscore 14043 has among the lowest discriminations of all 67 items at \Sexpr{round(CRAparametersSortedByDisc["q_14043","disc"],2)}. In the top right, item q\textunderscore 14072 has a low but adequate discrimination of \Sexpr{round(CRAparametersSortedByDisc["q_14072","disc"],2)}. Items q\textunderscore 14154 and q\textunderscore 14031 have the median and maximum discrimination values, respectively (\Sexpr{round(CRAparametersSortedByDisc["q_14048","disc"],2)} and \Sexpr{round(CRAparametersSortedByDisc["q_14031","disc"],2)}).
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.75\textwidth]{figure/discriminations67.png}}{\caption{Examples of varying discrimination values among the CRA items.}\label{fig:discriminations}}
+\end{figure}
+
+\subsection{Identifying and reporting on the final set of (65) new CRA items}
+
+As suggested in the prior section, there are two items close to the lower threshold of acceptable discrimination values (slightly above and/or at 0.5). These items are q\textunderscore 14043 and q\textunderscore 14023. Several other items have discriminations between 0.55 and 0.65 --- these are items q\textunderscore 14011, q\textunderscore 14003, q\textunderscore 14175, and q\textunderscore 14058. Note that 3 of the latter set of items have a correct answer beginning with a common letter (``s''), and it may be that this reflects a somewhat effective guessing strategy to the detriment of the discrimination of those items. All of these six items are listed below:
+
+\begin{itemize}
+\item q\textunderscore 14043 --- \textbf{prompt:} front  side  bed; \textbf{response options:} o,p,w,a,t,l; \textbf{answer:} l (lake)
+\end{itemize}
+
+\begin{itemize}
+\item q\textunderscore 14023 --- \textbf{prompt:} card  board  keeper; \textbf{response options:} d,t,a,o,s,r; \textbf{answer:} s (score)
+\end{itemize}
+
+\begin{itemize}
+\item q\textunderscore 14011 --- \textbf{prompt:} line  rocket  box; \textbf{response options:} s,m,p,d,v,o; \textbf{answer:} s (sky)
+\end{itemize}
+
+\begin{itemize}
+\item q\textunderscore 14003 --- \textbf{prompt:} bed  sheet  wide; \textbf{response options:} m,y,s,v,k,a; \textbf{answer:} s (spread)
+\end{itemize}
+
+\begin{itemize}
+\item q\textunderscore 14175 --- \textbf{prompt:} line  water  war; \textbf{response options:} p,f,s,m,n,k; \textbf{answer:} f (front)
+\end{itemize}
+
+\begin{itemize}
+\item q\textunderscore 14058 --- \textbf{prompt:} bed  jet  blood; \textbf{response options:} f,m,b,s,r,w; \textbf{answer:} s (stream)
+\end{itemize}
+
+Ultimately, it was decided to drop the least discriminating of these items (q\textunderscore 14043 and q\textunderscore 14023) and retain the rest. The decision to retain the latter 4 (q\textunderscore 14011, q\textunderscore 14003, q\textunderscore 14175, and q\textunderscore 14058) was based on the case for retaining as many items as possible for the sake of potentially developing a CAT at some future point. However, the decision to retain these items should be reevaluate in subsequent research, especially if contradicting evidence is found in other samples (that is, if the items continue to have borderline discrimination values).
+
+In the remainder of this section, we re-run the code from the prior subsections after removing the 2 undesirable items; this leaves only 65 items in total. The new analyses generate updated versions of the correlation plot and item probability functions; see Figures \ref{fig:singlefactorcorsFinal}, \ref{fig:ICCscombinedFinal}, and \ref{fig:ICCsFinal}.
+
+\begin{scriptsize}
+<<Study1.12, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+itemsToDropDisc <- rownames(subset(CRAparametersSortedByDisc, disc < .52))
+itemsToDrop67 <- itemsToDropDisc
+length(itemsToDrop67)
+# As of 8/19/2022, two items are dropped: 14043 and 14023
+
+if (length(itemsToDrop67)>0) {
+CRAitemSetFinal <- CRAitemSet67[, -which(names(CRAitemSet67) %in% itemsToDrop67)]
+} else {
+CRAitemSetFinal <- CRAitemSet67
+}
+
+dim(CRAitemSetFinal)
+
+CRAitemNumbersStudy1 <- colnames(CRAitemSetFinal)
+descCRAitems <- psych::describe(CRAitemSetFinal)
+
+tetchor_matrix <- tetrachoric(CRAitemSetFinal, smooth = TRUE)
+cor_matrix <- tetchor_matrix$rho
+
+omega_results <- suppressWarnings(psych::omega(cor_matrix, plot = FALSE))
+omega.h <- round(omega_results$omega_h,2)
+omega.alpha <- round(omega_results$alpha,2)
+omega.t <- round(omega_results$omega.tot,2)
+
+CRA_fa <- suppressMessages(suppressWarnings(fa(cor_matrix, nfactors = 1)))
+CRA_fa_sort <- fa.sort(CRA_fa)
+rows_CRA <- rownames(CRA_fa_sort$loadings)
+
+cor_matrix_plot <- cor_matrix[rows_CRA, rows_CRA]
+
+min_cor_value <- min(cor_matrix)
+avg_cor_value <- mean(cor_matrix)
+
+CIs <- corCi(cor_matrix, n.iter=1000, n=pwiseAdminsCRAitemsDescribe$mean)
+CIs2 <- as.data.frame(CIs$r.ci)
+CIs2$range <- CIs2$upper-CIs2$lower
+CIs2$sig <- ifelse(CIs2$range > CIs2$upper, 0, 1)
+CIs2$sigNeg <- ifelse(CIs2$upper < 0, 1, 0)
+
+maxCI <- max(CIs2$range)
+minCI <- min(CIs2$range)
+meanCI <- mean(CIs2$range)
+overlappingZero <- nrow(CIs2)-sum(CIs2$sig)
+sigNeg <- sum(CIs2$sigNeg)
+
+# get the IRT model of the response data
+IRT_model <- suppressWarnings(mirt(CRAitemSetFinal, 1, itemtype = "2PL", constrain = NULL, technical = list(NCYCLES=2000)))
+summary(IRT_model)
+@
+\end{scriptsize}
+
+
+\begin{scriptsize}
+<<Study1.13, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# plot the cor matrix and item characteristic curves for all items separately and together
+# comment out the remainder of this chunk when ready to publish
+
+file_path = paste(wdpath, "figure/singlefactorcorsFinal.png", sep = "")
+png(height=1800, width=1800, file=file_path, type = "cairo")
+corrplot(cor_matrix_plot, method = "color", tl.col = "black",
+         bg = "White", tl.srt = 0, type = "full", title = "",
+         col = COL2('RdBu',200), tl.pos = 'n')
+dev.off()
+
+file_path= paste(wdpath, "figure/singlefactorcorsFinal.eps", sep="")
+setEPS()
+postscript(height=200, width=200, file=file_path)
+corrplot(cor_matrix_plot, method = "color", tl.col = "black",
+         bg = "White", tl.srt = 0, type = "full", title = "",
+         col = COL2('RdBu',200), tl.pos = 'n')
+dev.off()
+
+file_path = paste(wdpath, "figure/ICCsFinal.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model, type = 'trace', facet_items = TRUE)
+dev.off()
+
+file_path= paste(wdpath, "figure/ICCsFinal.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model, type = 'trace', facet_items = TRUE)
+dev.off()
+
+file_path = paste(wdpath, "figure/ICCscombinedFinal.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model, type = 'trace', facet_items = FALSE, auto.key = FALSE)
+dev.off()
+
+file_path= paste(wdpath, "figure/ICCscombinedFinal.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model, type = 'trace', facet_items = TRUE)
+dev.off()
+
+@
+\end{scriptsize}
+
+\begin{figure}
+\begin{floatrow}
+\ffigbox{\includegraphics[width=.45\textwidth]{figure/singlefactorcorsFinal.png}}{\caption{Correlations among the final CRA items sorted by general factor loadings.}\label{fig:singlefactorcorsFinal}}
+\ffigbox{\includegraphics[width=.45\textwidth]{figure/ICCscombinedFinal.png}}{\caption{Item probability functions for the final CRA items together.}\label{fig:ICCscombinedFinal}}
+\end{floatrow}
+\end{figure}
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.95\textwidth]{figure/ICCsFinal.png}}{\caption{Item probability functions for the final CRA items.}\label{fig:ICCsFinal}}
+\end{figure}
+
+\begin{scriptsize}
+<<Study1.14, eval=TRUE, echo=FALSE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+marginalReliability <- marginal_rxx(IRT_model)
+
+# table the item parameters again
+# note that you must specify IRTpars=TRUE to get difficulties instead of easiness
+IRT_model_parameters <- coef(IRT_model, IRTpars=TRUE, simplify = TRUE)
+CRAparameters <- IRT_model_parameters$items[,1:2]
+CRAparameters <- data.frame(CRAparameters, descCRAitems$mean, descCRAitems$se, descCRAitems$n)
+colnames(CRAparameters) <- c("discrimination", "difficulty", "mean", "se", "n")
+@
+\end{scriptsize}
+
+
+\begin{scriptsize}
+<<Study1.15, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# plot the test information function with the standard error
+
+file_path = paste(wdpath, "figure/irttestfunction.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model, type = "infoSE", xlim = c(-3,3)) #test score function
+dev.off()
+
+file_path= paste(wdpath, "figure/irttestfunction.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model, type = "infoSE", xlim = c(-3,3)) #test score function
+dev.off()
+
+file_path = paste(wdpath, "figure/IRTtwofigures.png", sep = "")
+png(height=600, width=1200, file=file_path, type = "cairo")
+plot1 <- plot(IRT_model, type = "infoSE", xlim = c(-3,3)) #test score function
+plot2 <- plot(IRT_model, type = 'trace', facet_items = FALSE, auto.key = FALSE)
+grid.arrange(plot1,plot2, ncol=2)
+dev.off()
+@
+\end{scriptsize}
+
+
+\begin{scriptsize}
+<<Study1.16, eval=TRUE, echo=FALSE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+CRAitemContenttrimmed <- CRAitemContent[rownames(CRAparameters),c("prompt1", "prompt2", "prompt3", "stem")]
+colnames(CRAitemContenttrimmed) <- c("Stimuli 1", "Stimuli 2", "Stimuli 3", "Solution")
+CRAparametersv2 <- cbind(CRAitemContenttrimmed, CRAparameters)
+
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(CRAparametersv2))
+comment$command <- c(paste("\\hline\n",
+  "\\multicolumn{10}{l}{Notes: The values for mean, se (standard error of the mean), and n are based on individual item}\\\\\n",
+  "\\multicolumn{10}{l}{administrations; the discrimination and difficulty values are based on a 2PL item response model.}\\\\\n",
+  sep = ""))
+
+CRAparametersTable <- xtable(CRAparametersv2, digits=0, caption='Item parameters for final CRA items', label='tab:parameters')
+align(CRAparametersTable) <- "lccccccccc"
+digits(CRAparametersTable) <- c(0,0,0,0,0,2,2,2,3,0)
+print(CRAparametersTable, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+@
+\end{scriptsize}
+
+In Table \ref{tab:parameters}, we present the results numerically, overlapping with the figures to some extent. This includes coefficients for the item difficulties (the location of the 50/50 probability of a correct response) and discrimination parameters (the slopes), as well as the mean proportion of correct responses and the standard error of the means.
+
+Figure \ref{fig:irttestfunction} shows the joint information for the final set of CRA items across the range of difficulty along with the standard error. As the standard error is akin to the inverse of reliability (more specifically, reliability is 1 minus the square of the standard error over the standard deviation), Figure \ref{fig:irttestfunction} indicates that the test is particularly reliable from the range of difficulty of about -0.5 sd to +3 sd. The marginal reliability across all respondents in these data is high at \Sexpr{round(marginalReliability,2)} \citep{Thissen:2001}.
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.75\textwidth]{figure/irttestfunction.png}}{\caption{Test information (blue) and standard error (red) functions for the new CRA items.}\label{fig:irttestfunction}}
+\end{figure}
+
+The final step of the IRT analyses for the new items is to generate latent trait scores for respondents based on the item parameters from this 2PL model. The next code chunk does just that, appending the scale scores to the end of our data frame based on responses to the final set of new items.
+
+\begin{scriptsize}
+<<Study1.17, eval=TRUE, echo=TRUE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# use the model to generate IRT scores
+CRAitemSetFinal <- CRAitemSetFinal[,1:65]
+
+empty_rows = which(is.nan(rowMeans(CRAitemSetFinal, na.rm = TRUE)))
+CRAitemSetTemp <- CRAitemSetFinal[-empty_rows,]
+scored <- fscores(object = IRT_model, response.pattern = CRAitemSetTemp)
+CRAitemSetFinal[-empty_rows,c("CRA_new_IRT_score", "CRA_new_IRT_score_SE")] <- scored
+save(CRAitemSetFinal, file = paste(wdpath, "data/study1/CRAitemSetFinal.rdata", sep = ""))
+CRAnewItemNames <- colnames(CRAitemSetFinal)
+IRT_model_ICAR_CRAnew <- IRT_model
+save(IRT_model_ICAR_CRAnew, CRAnewItemNames, file = paste(wdpath, "data/study1/IRTmodelCRAnewItems.rdata", sep = ""))
+@
+\end{scriptsize}
+
+\clearpage
+
+\subsection{Dimensionality and IRT analyses of 30 original CRAT items}
+
+\textbf{NOTE:} \textit{The analyses of this sub-section are included here because (a) they are based on the administration of CRAT items (with a mulitple choice response format) to the sample reported on above, and (b) the same IRT procedures used in the previous sub-sections are used again here to identify IRT parameters for these CRAT items for use in Study 2. However, these analyses are not elaborated on extensively in the manuscript as the focus of Study 1 is mainly on the new CRA item set. In Study 4, a more complete pool of CRA items is evaluated together to produce more generalizable IRT parameters, and these are recommended for use by other research teams.}
+
+In addition to the new item set described above (67 original items winnowed down to 65), data were collected on 30 items from an extant CRA item pool \citep[the ``CRAT'' items;][]{Bowden:2003CRAT} using the revised, multiple-choice response format. These items are traditionally administered with an open-ended response format. In this section, we evaluate the dimensionality and IRT-based item properties of those items as an independent set of 30. This is done as part of validating the new set of items against the older set using the same response choice format and scoring method, though it requires additional evaluation of the psychometric properties of the older set (to support the use of IRT scoring).
+
+In the code chunk below, we evaluated the 30 CRAT items independently; the code is not shown in the PDF as it is duplicative of the methods used earlier with the new item set. As with some of the new items, there was one item among these 30 that had a discrimination near the threshold (item q\textunderscore 14317 $=$ .503); it was dropped. In addition, several of the remaining items had very steep discrimination thresholds, suggesting that conditional (correct/incorrect) response patterns existed among them --- this is known as local dependence among the items. To retain as many as possible, we dropped items one-by-one until the model resolved without any items having excessively high discrimination values (this is documented in the .Rnw version of this file). In the end, this left 22 items from the original 30; 1 was dropped due to low discrimination and 7 were dropped to resolve local dependence. The 7 items dropped due to local dependence were:
+
+\begin{itemize}
+\item q\textunderscore 14307 --- \textbf{prompt:} way  board  sleep; \textbf{response options:} o,w,h,d,l,s; \textbf{answer:} w (walk)
+\item q\textunderscore 14318 --- \textbf{prompt:} land  hand  house; \textbf{response options:} a,g,e,l,w,f; \textbf{answer:} f (farm)
+\item q\textunderscore 14310 --- \textbf{prompt:} fence  card  master; \textbf{response options:} p,t,f,v,l,d; \textbf{answer:} p (post)
+\item q\textunderscore 14308 --- \textbf{prompt:} tail  water  flood; \textbf{response options:} g,y,r,l,v,s; \textbf{answer:} g (gate)
+\item q\textunderscore 14315 --- \textbf{prompt:} hold  print  stool; \textbf{response options:} d,l,f,c,b,w; \textbf{answer:} f (foot)
+\item q\textunderscore 14298 --- \textbf{prompt:} fox  man  peep; \textbf{response options:} r,h,k,m,a,t; \textbf{answer:} h (hole)
+\item q\textunderscore 14299 --- \textbf{prompt:} shine beam struck; \textbf{response options:} r,m,t,c,a,f; \textbf{answer:} m (moon)
+\end{itemize}
+
+Note that this does not mean the items above are necessarily ``bad'' or invalid by themselves (though they may be --- more work would be needed to determine this). But, they were removed here because it would not be appropriate to generate IRT-based scores based, in part, on items that are not independent from the remaining items in the set. This also has relevance for Study 2, as described in that sections.
+
+\begin{scriptsize}
+<<Study1.18, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+rm(list=ls()[!(ls() %in% c('findcolnumber', 'itemsToDrop67', 'wdpath', 'CRAitemNumbersStudy1', 'score_ICAR_IRT'))])
+load(paste(wdpath, "data/study1/CRAdataStudy1version1.rdata", sep = ""))
+
+CRAdata <- CRAitemData[CRAitemData$servertime < as.POSIXct("2022-06-26 12:00:00", tz="UTC"),]
+dim(CRAdata)
+
+allNew <- unique(c(CRAitemNumbersStudy1, itemsToDrop67))
+CRAitemSet97 <- subset(CRAdata, select = c(q_14003:q_14318))
+CRATitemSet30 <- CRAitemSet97[, -which(names(CRAitemSet97) %in% allNew)]
+
+# delete the line below once you figure out the effect of dropping high disc items
+CRATitemSettrimmed <- subset(CRATitemSet30, select = -c(q_14317, q_14307, q_14318, q_14310, q_14308, q_14315, q_14298, q_14299))
+dim(CRATitemSettrimmed)
+
+CRATitemNumbers <- colnames(CRATitemSettrimmed)
+descCRATitems <- psych::describe(CRATitemSettrimmed)
+descCRATitemssorted <- descCRATitems[with(descCRATitems, order(-mean)),]
+
+pwiseAdminsCRATitems <- pairwiseCount(CRATitemSettrimmed, diagonal = TRUE)
+pwiseAdminsCRATitems <- as.vector(pwiseAdminsCRATitems[lower.tri(pwiseAdminsCRATitems)])
+pwiseAdminsCRATitemsDescribe <- psych::describe(pwiseAdminsCRATitems)
+n_obstrimmed <- pwiseAdminsCRATitemsDescribe$mean
+
+tetchor_matrixtrimmed <- tetrachoric(CRATitemSettrimmed, smooth = TRUE)
+cor_matrixtrimmed <- tetchor_matrixtrimmed$rho
+
+omega_resultstrimmed <- suppressWarnings(psych::omega(cor_matrixtrimmed, plot = FALSE))
+omega.htrimmed <- round(omega_resultstrimmed$omega_h,2)
+omega.alphatrimmed <- round(omega_resultstrimmed$alpha,2)
+omega.ttrimmed <- round(omega_resultstrimmed$omega.tot,2)
+
+CRA_fatrimmed <- suppressMessages(suppressWarnings(fa(cor_matrixtrimmed, nfactors = 1)))
+CRA_fa_sorttrimmed <- fa.sort(CRA_fatrimmed)
+rows_CRAtrimmed <- rownames(CRA_fa_sorttrimmed$loadings)
+
+cor_matrixtrimmed_plot <- cor_matrixtrimmed[rows_CRAtrimmed, rows_CRAtrimmed]
+
+avg_cor_valuetrimmed <- mean(cor_matrixtrimmed)
+
+CIstrimmed <- corCi(cor_matrixtrimmed, n.iter=1000, n=pwiseAdminsCRATitemsDescribe$mean)
+CIstrimmed <- as.data.frame(CIstrimmed$r.ci)
+CIstrimmed$range <- CIstrimmed$upper-CIstrimmed$lower
+CIstrimmed$sig <- ifelse(CIstrimmed$range > CIstrimmed$upper, 0, 1)
+CIstrimmed$sigNeg <- ifelse(CIstrimmed$upper < 0, 1, 0)
+
+maxCItrimmed <- max(CIstrimmed$range)
+minCItrimmed <- min(CIstrimmed$range)
+meanCItrimmed <- mean(CIstrimmed$range)
+overlappingZerotrimmed <- nrow(CIstrimmed)-sum(CIstrimmed$sig)
+sigNegtrimmed <- sum(CIstrimmed$sigNeg)
+
+# get the IRT model of the response data
+IRT_modeltrimmed <- suppressWarnings(mirt(CRATitemSettrimmed, 1, itemtype = "2PL", constrain = NULL, technical = list(NCYCLES=2000)))
+summary(IRT_modeltrimmed)
+
+# table the item parameters
+# note that you must specify IRTpars=TRUE to get difficulties instead of easiness
+IRT_model_parameterstrimmed <- coef(IRT_modeltrimmed, IRTpars=TRUE, simplify = TRUE)
+CRATparameterstrimmed <- IRT_model_parameterstrimmed$items[,1:2]
+CRATparameterstrimmed <- data.frame(CRATparameterstrimmed, descCRATitems$mean, descCRATitems$se, descCRATitems$n)
+colnames(CRATparameterstrimmed) <- c("discrimination", "difficulty", "mean", "se", "n")
+
+CRATparametersSortedByDisc <- CRATparameterstrimmed[order(CRATparameterstrimmed[,"discrimination"]),]
+CRATparametersSortedByDiff <- CRATparameterstrimmed[order(CRATparameterstrimmed[,"difficulty"]),]
+CRATparametersSortedByMean <- CRATparameterstrimmed[order(CRATparameterstrimmed[,"mean"]),]
+
+# plot the cor matrix and item characteristic curves for all items separately and together
+
+file_path = paste(wdpath, "figure/singlefactorcorstrimmed.png", sep = "")
+png(height=1800, width=1800, file=file_path, type = "cairo")
+corrplot(cor_matrixtrimmed_plot, method = "color", tl.col = "black",
+         bg = "White", tl.srt = 0, type = "full", title = "",
+         col = COL2('RdBu',200), tl.pos = 'n')
+dev.off()
+
+file_path= paste(wdpath, "figure/singlefactorcorstrimmed.eps", sep="")
+setEPS()
+postscript(height=200, width=200, file=file_path)
+corrplot(cor_matrixtrimmed_plot, method = "color", tl.col = "black",
+         bg = "White", tl.srt = 0, type = "full", title = "",
+         col = COL2('RdBu',200), tl.pos = 'n')
+dev.off()
+
+file_path = paste(wdpath, "figure/ICCstrimmed.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_modeltrimmed, type = 'trace', facet_items = TRUE)
+dev.off()
+
+file_path= paste(wdpath, "figure/ICCstrimmed.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_modeltrimmed, type = 'trace', facet_items = TRUE)
+dev.off()
+
+file_path = paste(wdpath, "figure/ICCscombinedtrimmed.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_modeltrimmed, type = 'trace', facet_items = FALSE, auto.key = FALSE)
+dev.off()
+
+file_path= paste(wdpath, "figure/ICCscombinedtrimmed.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_modeltrimmed, type = 'trace', facet_items = TRUE)
+dev.off()
+
+# plot the test information function with the standard error
+
+file_path = paste(wdpath, "figure/irttestfunctiontrimmed.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_modeltrimmed, type = "infoSE", xlim = c(-3,3)) #test score function
+dev.off()
+
+file_path= paste(wdpath, "figure/irttestfunctiontrimmed.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_modeltrimmed, type = "infoSE", xlim = c(-3,3)) #test score function
+dev.off()
+
+# use the model to generate IRT scores
+empty_rows = which(is.nan(rowMeans(CRATitemSettrimmed, na.rm = TRUE)))
+CRAitemSetTemp2 <- CRATitemSettrimmed[-empty_rows,]
+scored <- fscores(object = IRT_modeltrimmed, response.pattern = CRAitemSetTemp2)
+CRATitemSettrimmed[-empty_rows,c("CRATtrimmed_IRT_score", "CRATtrimmed_IRT_score_SE")] <- scored
+save(CRATitemSettrimmed, file = paste(wdpath, "data/study1/CRATitemSettrimmed.rdata", sep = ""))
+IRT_model_CRAT <- IRT_modeltrimmed
+save(IRT_model_CRAT, CRATitemNumbers, file = paste(wdpath, "data/study1/IRTmodelCRATitems.rdata", sep = ""))
+
+marginalReliabilitytrimmed <- marginal_rxx(IRT_modeltrimmed)
+
+# make table of item content and parameters
+CRAitemContenttrimmedv2 <- CRAitemContent[rownames(CRATparameterstrimmed),c("prompt1", "prompt2", "prompt3", "stem")]
+colnames(CRAitemContenttrimmedv2) <- c("Stimuli 1", "Stimuli 2", "Stimuli 3", "Solution")
+CRATparameterstrimmedv2 <- cbind(CRAitemContenttrimmedv2, CRATparameterstrimmed)
+
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study1.19, eval=TRUE, echo=FALSE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(CRATparameterstrimmedv2))
+comment$command <- c(paste("\\hline\n",
+                          "\\multicolumn{10}{l}{Notes: The values for mean, se (standard error of the mean), and n are based on individual}\\\\\n",
+                          "\\multicolumn{10}{l}{administrations; the discrimination and difficulty values are based on a 2PL item response model.}\\\\\n", sep = ""))
+
+CRATparameterstrimmedTable <- xtable(CRATparameterstrimmedv2, digits=0, caption='Item parameters for the retained CRAT items', label='tab:parameterstrimmed')
+align(CRATparameterstrimmedTable) <- "lccccccccc"
+digits(CRATparameterstrimmedTable) <- c(0,0,0,0,0,2,2,2,3,0)
+print(CRATparameterstrimmedTable, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+@
+\end{scriptsize}
+
+Like the new CRA item set, internal consistency among the retained CRAT items was strong ($\alpha$ = \Sexpr{omega.alphatrimmed}; $\omega_{t}$ = \Sexpr{omega.ttrimmed}). Omega general ($\omega_{h}$ = \Sexpr{omega.htrimmed}) also suggests strong unidimensionality in the CRAT set, as shown in Figure \ref{fig:singlefactorcorstrimmed}. Correlations among the items had a mean value of \Sexpr{round(avg_cor_valuetrimmed,3)} and a mean 95\% confidence interval range of \Sexpr{round(meanCItrimmed,3)}. Of the 276 pairwise correlations, \Sexpr{overlappingZerotrimmed} had confidence intervals overlapping with zero; \Sexpr{sigNegtrimmed} of the remaining \Sexpr{276-overlappingZerotrimmed} had point estimates below 0. These estimates are based on pairwise administration counts among the CRAT items of \Sexpr{prettyNum(round(pwiseAdminsCRATitemsDescribe$mean, 2), big.mark=",", scientific=F)} on average (\textit{sd} = \Sexpr{prettyNum(round(pwiseAdminsCRATitemsDescribe$sd, 2), big.mark=",", scientific=F)}; \textit{Mdn} = \Sexpr{prettyNum(round(pwiseAdminsCRATitemsDescribe$median, 2), big.mark=",", scientific=F)}; minimum = \Sexpr{prettyNum(round(pwiseAdminsCRATitemsDescribe$min, 2), big.mark=",", scientific=F)}).
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.75\textwidth]{figure/ICCstrimmed.png}}{\caption{Item probability functions for the retained CRAT items individually.}\label{fig:ICCstrimmed}}
+\end{figure}
+
+\begin{figure}
+\begin{floatrow}
+\ffigbox{\includegraphics[width=.45\textwidth]{figure/singlefactorcorstrimmed.png}}{\caption{Correlations among the retained CRAT items sorted by general factor loadings.}\label{fig:singlefactorcorstrimmed}}
+\ffigbox{\includegraphics[width=.45\textwidth]{figure/ICCscombinedtrimmed.png}}{\caption{Item probability functions for the retained CRAT items as a bank.}\label{fig:ICCscombinedtrimmed}}
+\end{floatrow}
+\end{figure}
+
+Figures \ref{fig:ICCscombinedtrimmed} and \ref{fig:ICCstrimmed} demonstrate that most of the retained CRAT items are adequately discriminant (\textit{m} = \Sexpr{round(mean(CRATparameterstrimmed[,"discrimination"]),2)}; \textit{Mdn} = \Sexpr{round(median(CRATparameterstrimmed[,"discrimination"]),2)}). The difficulties (\textit{m} = \Sexpr{round(mean(CRATparameterstrimmed[,"difficulty"]),2)}; \textit{Mdn} = \Sexpr{round(median(CRATparameterstrimmed[,"difficulty"]),2)}) are roughly equivalent to those of the new 66 item set. Figure \ref{fig:irttestfunctiontrimmed} shows the test information and standard error functions; the marginal reliability is \Sexpr{round(marginalReliabilitytrimmed,2)}. Table \ref{tab:parameterstrimmed} includes the coefficients for all item difficulty and discrimination parameters and other descriptive statistics.
+
+These item parameters can be used to IRT score results for these items (when the multiple choice response framework is used) in subsequent studies for the current work.
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.55\textwidth]{figure/irttestfunctiontrimmed.png}}{\caption{Test information (blue) and standard error (red) functions for the retained CRAT items}\label{fig:irttestfunctiontrimmed}}
+\end{figure}
+
+\clearpage
+
+\subsection{Validation of the final set of new CRA items}
+
+In this subsection, we conduct a series of analyses aimed at evaluating the validity of the new CRA item set. Note that the analyses in this sub-section require access to `version 2' of the data, as the validation data relating to all other variables are not available publicly at the time of submission for peer review. The full dataset will be released at a later date, consistent with prior practice for the \textbf{[blinded for review]} project, and all reasonable requests for access prior to this time will be met (contact the senior author to request access).
+
+The first chunk of code for these analyses (not shown in the PDF; see the Rnw version) subsets the main data frame into a more manageable object, one that contains all of the relevant scales scores and demographic variables. The scale scores include IRT-based scores for the 27 traits of the SAPA Personality Inventory \citep{Condon:2018tf, Condon:14Diss} and 6 previously validated scales in the International Cognitive Ability Resource \citep{Blum:2016, Condon:14, Guhne:2021}, as well as scale scores for the Big Five (SPI) using classical test theory (e.g., sum scores). IRT-based scoring procedures were also used for the new CRA item set (65 items) and the CRAT item set (23 items). Descriptive statistics for all of the scales are shown in Table \ref{tab:scaleDescriptives}.
+
+\begin{scriptsize}
+<<Study1.20, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+rm(list=ls()[!(ls() %in% c('wdpath', 'findcolnumber', 'score_ICAR_IRT', 'CRAitemNumbersStudy1'))])
+
+# In this chunk of code, we're getting a matrix of scale scores; all are IRT-based except the SPI Big 5
+# Here, we append CRA IRT scores onto CRAdata from CRAitemSetFinal
+load(paste(wdpath, "data/study1/CRAdataStudy1version2.rdata", sep = ""))
+CRAdata <- CRAdata[CRAdata$servertime < as.POSIXct("2022-06-26 12:00:00", tz="UTC"),]
+dim(CRAdata)
+
+load(paste(wdpath, "data/study1/CRAitemSetFinal.rdata", sep = ""))
+load(paste(wdpath, "data/study1/CRATitemSettrimmed.rdata", sep = ""))
+
+CRAdata <- data.frame(CRAdata, CRAitemSetFinal$CRA_new_IRT_score, CRAitemSetFinal$CRA_new_IRT_score_SE, CRATitemSettrimmed$CRATtrimmed_IRT_score, CRATitemSettrimmed$CRATtrimmed_IRT_score_SE)
+names(CRAdata)[names(CRAdata) == 'CRAitemSetFinal.CRA_new_IRT_score'] <- 'CRA_new_IRT_score'
+names(CRAdata)[names(CRAdata) == 'CRAitemSetFinal.CRA_new_IRT_score_SE'] <- 'CRA_new_IRT_score_SE'
+names(CRAdata)[names(CRAdata) == 'CRATitemSettrimmed.CRATtrimmed_IRT_score'] <- 'CRAT_IRT_score'
+names(CRAdata)[names(CRAdata) == 'CRATitemSettrimmed.CRATtrimmed_IRT_score_SE'] <- 'CRATtrimmed_IRT_score_SE'
+
+# pull out the big five keys
+makeSPI5keys <- keys.list[c("SPI_135_27_5_Agree", "SPI_135_27_5_Consc", "SPI_135_27_5_Neuro",
+                            "SPI_135_27_5_Extra", "SPI_135_27_5_Open")]
+
+SPI5key <- make.keys(itemsSPI, makeSPI5keys)
+SPI5scored <- scoreItems(SPI5key, CRAdata[,itemsSPI], totals=FALSE, impute="none", min=1, max=6)
+SPI5reliabilities <- SPI5scored$alpha
+
+CRAdata <- data.frame(CRAdata, SPI5scored$scores)
+
+# These are the items/scales we want for validity analyses
+demovars <- c("RID", "age", "sex", "major", "occupation")
+SPI5scores <- colnames(CRAdata)[findcolnumber(CRAdata, "SPI_135_27_5_Agree"):findcolnumber(CRAdata, "SPI_135_27_5_Open")]
+SPI27irtscores <- colnames(CRAdata)[findcolnumber(CRAdata, "SPI_135_27_5_Impulsivity_score"):findcolnumber(CRAdata, "SPI_135_27_5_EasyGoingness_score")]
+ICARirtscores <- colnames(CRAdata)[findcolnumber(CRAdata, "ICAR_LN_IRT_score"):findcolnumber(CRAdata, "ICAR_PR_IRT_score")]
+CRAirtscores <- colnames(CRAdata)[c(findcolnumber(CRAdata, "CRA_new_IRT_score"),findcolnumber(CRAdata, "CRAT_IRT_score"))]
+CRAvalidityVars <- c(demovars, SPI5scores, SPI27irtscores, ICARirtscores, CRAirtscores)
+
+CRAvalidityData <- subset(CRAdata, select = c(CRAvalidityVars))
+names(CRAvalidityData)[names(CRAvalidityData) == "RID"] <- "RID" 
+names(CRAvalidityData)[names(CRAvalidityData) == "age"] <- "age" 
+names(CRAvalidityData)[names(CRAvalidityData) == "sex"] <- "sex" 
+names(CRAvalidityData)[names(CRAvalidityData) == "major"] <- "major" 
+names(CRAvalidityData)[names(CRAvalidityData) == "occupation"] <- "occupation" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Agree"] <- "Agreeableness" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Consc"] <- "Conscientiousness" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Neuro"] <- "Neuroticism" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Extra"] <- "Extraversion" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Open"] <- "Openness" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Impulsivity_score"] <- "Impulsivity" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Adaptability_score"] <- "Adaptability" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_SelfControl_score"] <- "SelfControl" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Compassion_score"] <- "Compassion" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Creativity_score"] <- "Creativity" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Charisma_score"] <- "Charisma" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Perfectionism_score"] <- "Perfectionism" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Conformity_score"] <- "Conformity" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Order_score"] <- "Order" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_EmotionalStability_score"] <- "EmotionalStability" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Irritability_score"] <- "Irritability" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_EmotionalExpressiveness_score"] <- "EmotionalExpressiveness" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Intellect_score"] <- "Intellect" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Humor_score"] <- "Humor" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Sociability_score"] <- "Sociability" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Conservatism_score"] <- "Conservatism" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_ArtAppreciation_score"] <- "ArtAppreciation" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Authoritarianism_score"] <- "Authoritarianism" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Trust_score"] <- "Trust" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Honesty_score"] <- "Honesty" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_AttentionSeeking_score"] <- "AttentionSeeking" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_WellBeing_score"] <- "WellBeing" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_SensationSeeking_score"] <- "SensationSeeking" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Introspection_score"] <- "Introspection" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Anxiety_score"] <- "Anxiety" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_Industry_score"] <- "Industry" 
+names(CRAvalidityData)[names(CRAvalidityData) == "SPI_135_27_5_EasyGoingness_score"] <- "EasyGoingness" 
+names(CRAvalidityData)[names(CRAvalidityData) == "ICAR_LN_IRT_score"] <- "Letter-Number Series" 
+names(CRAvalidityData)[names(CRAvalidityData) == "ICAR_MR_IRT_score"] <- "Matrix Reasoning" 
+names(CRAvalidityData)[names(CRAvalidityData) == "ICAR_R3D_IRT_score"] <- "Rotation3D" 
+names(CRAvalidityData)[names(CRAvalidityData) == "ICAR_VR_IRT_score"] <- "Verbal Reasoning" 
+names(CRAvalidityData)[names(CRAvalidityData) == "ICAR_FA_IRT_score"] <- "Figural Analogies" 
+names(CRAvalidityData)[names(CRAvalidityData) == "ICAR_PR_IRT_score"] <- "Propositional Reasoning" 
+names(CRAvalidityData)[names(CRAvalidityData) == "CRA_new_IRT_score"] <- "CRA new items" 
+names(CRAvalidityData)[names(CRAvalidityData) == "CRAT_IRT_score"] <- "CRAT items" 
+
+rm(list=ls()[!(ls() %in% c('CRAvalidityData', 'findcolnumber', 'keys.list', 'SPI5reliabilities', 'wdpath', 'score_ICAR_IRT', 'CRAitemNumbersStudy1'))])
+gc()
+
+descriptives <- describe(CRAvalidityData[,c(findcolnumber(CRAvalidityData, "CRA new items"),
+                                            findcolnumber(CRAvalidityData, "Agreeableness"):
+                                              findcolnumber(CRAvalidityData, "Propositional Reasoning"))])[-1]
+@
+\end{scriptsize}
+
+
+\begin{scriptsize}
+<<Study1.21, eval=TRUE, echo=FALSE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(descriptives))
+comment$command <- c(paste("\\hline\n", sep = ""))
+
+scaleDescriptivesTable <- xtable(descriptives, digits=0, caption='Descriptive statistics for the new CRA items, SPI-5, SPI-27, and ICAR, scales', label='tab:scaleDescriptives')
+align(scaleDescriptivesTable) <- "lrrrrrrr"
+digits(scaleDescriptivesTable) <- c(0,0,2,2,2,2,2,2)
+print(scaleDescriptivesTable, add.to.row = comment, format.args = list(big.mark = ",", decimal.mark = "."), hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+@
+\end{scriptsize}
+
+Evaluations of scale reliability vary depending on how the scales are scored. For the SPI Big Five, the standardized Cronbach's $\alpha$ values are \Sexpr{round(SPI5reliabilities[1],2)} for Agreeableness, \Sexpr{round(SPI5reliabilities[2],2)} for Conscientiousness, \Sexpr{round(SPI5reliabilities[3],2)} for Neuroticism, \Sexpr{round(SPI5reliabilities[4],2)} for Extraversion, and \Sexpr{round(SPI5reliabilities[5],2)} for Openness; these are based on the covariances of scores rather than the observed administrations, as is appropriate given the planned missingness design. For the IRT-scored scales, plots of the test information functions and standard errors are shown in Figures \ref{fig:spitif1} to \ref{fig:icartif}.
+
+\begin{figure}
+\includegraphics[width=.95\textwidth]{figure/spi_testcurves_01.pdf}\caption{Test information and standard error functions for 9 of the 27 SPI traits}\label{fig:spitif1}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=.95\textwidth]{figure/spi_testcurves_02.pdf}\caption{Test information and standard error functions for 9 of the 27 SPI traits}\label{fig:spitif2}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=.95\textwidth]{figure/spi_testcurves_03.pdf}\caption{Test information and standard error functions for 9 of the 27 SPI traits}\label{fig:spitif3}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=.95\textwidth]{figure/icar_testcurves.pdf}\caption{Test information and standard error functions for the ICAR traits}\label{fig:icartif}
+\end{figure}
+
+\begin{scriptsize}
+<<Study1.22, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+cor_obj = CRAvalidityData %>% 
+  # grab only numeric variables
+  dplyr::select(where(is.numeric)) %>%
+  # run cor test on data frame
+  corr.test()
+
+cor_obj_df = cor_obj$ci %>% #extract CI obj from list
+  #make data frame
+  as.data.frame() %>% 
+  # add new column called vars containing row names -- these are the names of the variables
+  mutate(vars = rownames(.)) %>%
+  # select only rows with CRAni in them  (CRA items)
+  dplyr::filter(str_detect(vars, "CRAni")) %>% 
+  # remove this part of the string -- we already know it's a correlation with CRA
+  mutate(vars = str_remove(vars, "-CRAni")) %>% 
+  # remove age, RID, and the CRAT correlations
+  dplyr::filter(!(vars %in% c("RID", "age")))
+
+# based on order of variables in above object, what do we want the real labels to be?
+
+cor_CRA_CRAT <- cor_obj_df["CRAni-CRATi",]
+# drop the CRA_CRAT row
+cor_obj_df <- cor_obj_df[!(row.names(cor_obj_df) %in% "CRAni-CRATi"),]
+
+ylabels <- c("Agreeableness", "Conscientiousness", "Neuroticism", "Extraversion", "Openness",
+             "Impulsivity", "Adaptability", "Self-Control", "Compassion", "Creativity",
+             "Charisma", "Perfectionism", "Conformity", "Order", "Emotional Stability",
+             "Irritability", "Emotional Expressiveness", "Intellect", "Humor", "Sociability",
+             "Conservatism", "Art Appreciation", "Authoritarianism", "Trust", "Honesty",
+             "Attention-Seeking", "Well-Being", "Sensation-Seeking", "Introspection",
+             "Anxiety", "Industry", "Easy-Goingness", "Letter-Number Series", "Matrix Reasoning",
+             "Rotation:3D", "Verbal Reasoning", "Figural Analogies", "Propositional Reasoning")
+
+# add names -- this ONLY WORKS if the order of ylabels matches the order of the variables in the data frame EXACTLY
+names(ylabels) = cor_obj_df$vars
+
+cor_obj_df %>% 
+  # modify variables
+  mutate( 
+    # create group variable -- this is based on the order of the variables in the data frame so be careful
+    group = c(
+      rep("Big Five", 5),
+      rep("SPI-27", 27),
+      rep("ICAR", 6)),
+    # specifying this is a factor so it keeps this exact order in the figure, instead of alphabetical order
+    group = factor(group, levels = c("Big Five", "SPI-27", "ICAR"))) %>% 
+  # recode variable labels with the ones we wrote out above
+  mutate(vars = recode(vars, !!!ylabels) )%>% 
+  ## remove Big Five traits (if you want)
+  #dplyr::filter(group != "Big Five") %>%
+  # plotting time!!
+  ggplot(aes(
+    # make the variables go on the x-axis -- we'll rotate later but need numbers on y for the CIs
+    x = reorder(vars, r),  #reorder makes the traits go from most + to most - correlated, within group
+    y = r)) +  # y = correlation
+  # a horizontal (after rotated:vertical) line here 
+  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "grey")  +
+  # confidence intervals
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = .5) + 
+  # add points for the correlations
+  geom_point() + 
+  #switch x and y -- this makes the correlations go down, rather than across
+  coord_flip() + 
+  # get rid of x-axis label (which shows up on the y-axis bc rotation)
+  labs(x = NULL) + 
+  # facet  grid will break these into cute little boxes
+  # note that this function doesn't care about the coord_flip -- we actually mean X and Y here
+  facet_grid(
+    #rows defined by groups, no variable for columns
+    group ~., 
+    # allows each box to take up the space it needs, rather than evenly dividing the plot into 2 or 3 boxes
+    space = "free_y", 
+    # allows each y-axis to be different 
+    scales = "free_y") +
+  # change theme 
+  # i like this one bc it has boxes to separate the three sections, keeps the grid lines so it's easier to see see which
+  # point goes with which trait/correlation value, and is mainly white
+  theme_bw()
+  ggsave(filename = paste(wdpath, "figure/validityCors.png", sep=""), scale = 1, width = 5, height = 6, units = c("in"), dpi = 300)
+
+@
+\end{scriptsize}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=.95\textwidth]{figure/validityCors.png}\caption{Correlation with the new CRA items}\label{fig:validityCors}
+\end{center}
+\end{figure}
+
+Once the scales are scored and organized, identifying the point estimates of the correlations and the 95\% confidence intervals is straight-forward. Figure \ref{fig:validityCors} shows the correlations between the new CRA items and the SPI Big Five, SPI-27, and ICAR measures. The results in Figure \ref{fig:validityCors} are mostly consistent with past findings on the relationship between measures of creativity and various other individual differences. As hypothesized, some of the stronger relationships emerged between associative ability and traits related to Openness to Experience. Among the SPI traits, associative ability showed the strongest positive correlation with Intellect, and some of the strongest negative associations with Conservatism (-) and Conformity (-). Unexpectedly, the relationship between associative ability and self-reported Creativity was relatively weak. For the Big Five traits, Openness to Experience showed one of the stronger relationships to associative ability, but the strongest relationship was found with Agreeableness. This was another unexpected finding, as was the relatively strong relationship between associative ability and SPI Honesty, which is closely related to the broader trait of Agreeableness. 
+
+In line with previous findings, traits related to emotionality also showed some of the stronger relationships with Associative Ability. For the SPI traits, Associative Ability showed some of the strongest positive relationships with Emotional Expressiveness, Well-Being, and Emotional Stability, and some of the strongest negative relationships with Anxiety, Impulsivity, and Irritability. Associative Ability also showed one of the strongest negative relationships with Big Five Neuroticism.
+
+Associative Ability was more strongly related to the ICAR cognitive abilities than to the temperament traits assessed using the SPI. This could be because the CRA items and cognitive ability measures are both performance-based rather than self-report measures (i.e., the measurement of these constructs introduces shared method variance). Associative Ability showed the strongest relationship with Propositional Reasoning and a relatively strong relationship with Verbal Reasoning. As expected, Associative ability showed weaker relationships with Figural Analogies, Spatial Ability (3D rotation), and Matrix Reasoning. Note that the correlations among the new CRA items and the CRAT items (not shown in the table) were higher than those with the other ICAR item types. The point estimate was \Sexpr{round(cor_CRA_CRAT$r,2)} [95\% CI: \Sexpr{round(cor_CRA_CRAT$lower,2)},\Sexpr{round(cor_CRA_CRAT$upper,2)}].
+
+\begin{scriptsize}
+<<Study1.22A, eval=TRUE, echo=TRUE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+
+### Code for running partial correlations ####  
+  
+# Selecting variables needed for g factor scores
+  data <- CRAvalidityData %>%
+    dplyr::select(RID, c(`Letter-Number Series`:`Propositional Reasoning`)) %>%
+    clean_names() %>% # cleaning up column names
+    dplyr::rename(RID=rid)
+  
+ 
+  # Fit measurement model
+gFactor_model <- '
+gFactor =~ `letter_number_series` + `matrix_reasoning` + rotation3d + `verbal_reasoning` + `figural_analogies` +
+            `propositional_reasoning`
+'                   
+  
+gFactor_fit <- suppressWarnings(cfa(gFactor_model, # model
+                     data = data, # data
+                     std.lv = TRUE,
+                     missing= "ML"))  # standardize variance of gFactor
+  
+  # Scoring on the general factor
+  gFactor_scores <- lavPredict(object = gFactor_fit,  
+                               type = "lv",                 # factor scores
+                               method = "regression")       # use regression 
+ 
+  # Add latent g scores to dataset
+  data <- cbind(data, gFactor_scores)
+
+  # Add to CRAvalidityData file
+  CRAvalidityData <- CRAvalidityData %>%
+    dplyr::inner_join(data[,c(1,8)], by = "RID")
+  
+  # t-scoring g factor variable to match others
+  CRAvalidityData <- CRAvalidityData %>%
+    dplyr::mutate(gFactor=((gFactor-mean(gFactor, na.rm=T))/sd(gFactor, na.rm=T))*10+50) 
+    
+  # Running Partial correlations
+  SPI_pCor_vars <- CRAvalidityData %>%
+    dplyr::mutate(`CRA new items`=((`CRA new items`-mean(`CRA new items`, na.rm=T))/sd(`CRA new items`, na.rm=T))*10+50) %>% 
+    dplyr::select(Agreeableness:EasyGoingness, `CRA new items`, gFactor)
+  
+  # Running partial correlations
+  SPI_pCors <- partial.r(SPI_pCor_vars, c(1:33), 34)
+  
+@
+\end{scriptsize}
+
+
+\begin{scriptsize}
+<<Study1.22B, eval=TRUE, echo=FALSE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+
+   # Getting orignal correlations for comparison
+  original_cors <- data.frame(round(cor_obj$r[c(3:34),41],2)) %>%
+    setNames("r") %>%
+    mutate(Trait = rownames(.)) %>%
+    relocate(Trait)
+  
+  # Confidence intervals for partial correlations
+  
+  # Need to get the minimum number of pairwise admins for CRA items and gfactor with all other scales 
+  pwiseAdminsScales <- pairwiseCount(SPI_pCor_vars, diagonal = TRUE)
+  pwiseAdminsScales <- data.frame(pwiseAdminsScales)
+  pwiseAdminsScales <- pwiseAdminsScales %>% dplyr::select(CRA.new.items, gFactor)
+  psych::describe(pwiseAdminsScales$CRA.new.items) # pairwise admins for CRA
+  psych::describe(pwiseAdminsScales$gFactor) # Pairwise admins for gFactor
+  pwiseAdminsScalesDescribe <- psych::describe(pwiseAdminsScales$CRA.new.items) # CRA has fewer pairwise admins than gFactor
+  n_obs <- pwiseAdminsScalesDescribe$min
+  n_obs
+  
+  SPI_pCors_CI <-data.frame(print(corr.p(SPI_pCors,n=n_obs,ci=TRUE), short=FALSE)) %>%
+    dplyr::mutate(Trait = rownames(.)) %>%
+    relocate(Trait) %>%
+    dplyr::filter(grepl("CRA", Trait)) %>%
+    dplyr::rename(partial_r = r) %>%
+    dplyr::mutate(Trait=original_cors$Trait) %>%
+    inner_join(original_cors, by="Trait") %>%
+    relocate(r, .after="Trait") %>%
+    dplyr::rename(partial_lower = lower,
+    partial_upper = upper,
+    partial_p = p)
+  
+  
+SPI_pCors_CI %>% 
+  dplyr::select(Trait, r, partial_r, partial_p) %>%
+  dplyr::mutate(difference = abs(r-partial_r)) %>%
+  relocate(difference, .after=partial_r) %>%
+  arrange(desc(difference)) 
+  
+@
+\end{scriptsize}
+
+
+\begin{scriptsize}
+<<Study1.23, eval=TRUE, echo=FALSE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+Majors <- CRAvalidityData %>%
+          dplyr::group_by(major) %>%
+          dplyr::summarise(
+          CRA_Score = mean(`CRA new items`, na.rm = TRUE),
+          LN  = mean(`Letter-Number Series`, na.rm = TRUE),
+          MR  = mean(`Matrix Reasoning`, na.rm = TRUE),
+          R3D = mean(Rotation3D, na.rm = TRUE),
+          VR  = mean(`Verbal Reasoning`, na.rm = TRUE),
+          FA  = mean(`Figural Analogies`, na.rm = TRUE),
+          PR  = mean(`Propositional Reasoning`, na.rm = TRUE),
+          n = length(!is.na(`CRA new items`)))
+
+Majors <- Majors %>%
+          mutate(CRA_Percentile = round(percent_rank(CRA_Score),2),
+			LN_Percentile = round(percent_rank(LN),2),
+			MR_Percentile = round(percent_rank(MR),2),
+			R3D_Percentile = round(percent_rank(R3D),2),
+			VR_Percentile = round(percent_rank(VR),2),
+			FA_Percentile = round(percent_rank(FA),2),
+			PR_Percentile = round(percent_rank(PR),2)
+                 )
+
+majors_10 <- Majors %>%
+  dplyr::filter(n>=200) %>%
+  arrange(desc(CRA_Score)) %>%
+  dplyr::select(major, CRA_Percentile, LN_Percentile, MR_Percentile, R3D_Percentile,
+  VR_Percentile, FA_Percentile, PR_Percentile) %>%
+  head(10)
+
+majors10df <- as.data.frame(majors_10)
+names(majors10df) <- c("Major", "CRA", "LN", "MR", "R3D", "VR", "FA", "PR")
+
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(majors10df))
+comment$command <- c(paste("\\hline\n", "\\multicolumn{9}{l}{Notes: The majors are sorted by percentile on the new CRA item set. LN = Letter-}\\\\\n", "\\multicolumn{9}{l}{Number Series, MR = Matrix Reasoning, R3D = Three-Dimensional Rotation,}\\\\\n", "\\multicolumn{9}{l}{VR = Verbal Reasoning, FA = Figural Analogies, PR = Propositional Reasoning.}\\\\\n", "\\multicolumn{9}{l}{}\\\\\n", sep = ""))
+
+majors10dfTable <- xtable(majors10df, digits=0, caption='University majors sorted by ICAR percentiles (top 10)', label='tab:majors10')
+align(majors10dfTable) <- "lrrrrrrrr"
+digits(majors10dfTable) <- c(0,2,2,2,2,2,2,2,2)
+print(majors10dfTable, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+# fix to match above
+
+Occupations <- CRAvalidityData %>%
+          dplyr::group_by(occupation) %>%
+          dplyr::summarise(
+          CRA_Score = mean(`CRA new items`, na.rm = TRUE),
+          LN  = mean(`Letter-Number Series`, na.rm = TRUE),
+          MR  = mean(`Matrix Reasoning`, na.rm = TRUE),
+          R3D = mean(Rotation3D, na.rm = TRUE),
+          VR  = mean(`Verbal Reasoning`, na.rm = TRUE),
+          FA  = mean(`Figural Analogies`, na.rm = TRUE),
+          PR  = mean(`Propositional Reasoning`, na.rm = TRUE),
+          n = length(!is.na(`CRA new items`)))
+
+Occupations <- Occupations %>%
+          mutate(CRA_Percentile = round(percent_rank(CRA_Score),2),
+			LN_Percentile = round(percent_rank(LN),2),
+			MR_Percentile = round(percent_rank(MR),2),
+			R3D_Percentile = round(percent_rank(R3D),2),
+			VR_Percentile = round(percent_rank(VR),2),
+			FA_Percentile = round(percent_rank(FA),2),
+			PR_Percentile = round(percent_rank(PR),2)
+                 )
+
+occupations_10 <- Occupations %>%
+  dplyr::filter(n>=200) %>%
+  arrange(desc(CRA_Score)) %>%
+  dplyr::select(occupation, CRA_Percentile, LN_Percentile, MR_Percentile, R3D_Percentile,
+  VR_Percentile, FA_Percentile, PR_Percentile) %>%
+  head(10)
+
+occupations10df <- as.data.frame(occupations_10)
+names(occupations10df) <- c("Occupation", "CRA", "LN", "MR", "R3D", "VR", "FA", "PR")
+
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(occupations10df))
+comment$command <- c(paste("\\hline\n", "\\multicolumn{9}{l}{Notes: The occupations are sorted by percentile on the new CRA item set. LN = Letter-}\\\\\n", "\\multicolumn{9}{l}{Number Series, MR = Matrix Reasoning, R3D = Three-Dimensional Rotation,}\\\\\n", "\\multicolumn{9}{l}{VR = Verbal Reasoning, FA = Figural Analogies, PR = Propositional Reasoning.}\\\\\n", "\\multicolumn{9}{l}{}\\\\\n", sep = ""))
+
+occupations10dfTable <- xtable(occupations10df, digits=0, caption='Occupations sorted by ICAR percentiles (top 10)', label='tab:occupations10')
+align(occupations10dfTable) <- "lrrrrrrrr"
+digits(occupations10dfTable) <- c(0,2,2,2,2,2,2,2,2)
+print(occupations10dfTable, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+@
+\end{scriptsize}
+
+
+\begin{scriptsize}
+<<Study1.24, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+rm(list=ls()[!(ls() %in% c('CRAvalidityData', 'findcolnumber', 'itemsToDrop67', 'keys.list', 'wdpath', 'CRAitemNumbersStudy1', 'score_ICAR_IRT'))])
+colnames(CRAvalidityData)[c(findcolnumber(CRAvalidityData, "CRA new items"))] <- "CRA"
+
+# Start by prepping the data, getting avg CRA score by job.
+CRA_data <- CRAvalidityData %>%
+            group_by(occupation) %>%
+            dplyr::summarise(CRA_Score = mean(CRA, na.rm = TRUE),
+            n = length(!is.na(CRA)))
+
+# Drop occupations with less than 100 people
+CRA_data <- CRA_data %>%
+            dplyr::filter(n>=100) %>%
+            mutate('SAPA.Job.Title' = occupation)
+
+# Load the onet_characteristics_by_job
+onet_data <- import(paste(wdpath, "data/study1/onet/onet_char.csv", sep = ""))
+
+# Evaluate the correlations among O*NET job characteristics
+onet_data_cor <- cor(onet_data, use = "pairwise")
+
+# Note that the correlations between "importance" and "level" characteristics tend to be
+# very high (>.85). For example:
+round(onet_data_cor[c(4,5),c(4,5)],2)
+round(onet_data_cor[c(6,7),c(6,7)],2)
+round(onet_data_cor[c(9,10),c(9,10)],2)
+
+# The correlations were less than .8 in only 3 importance/level pairs. These are:
+round(onet_data_cor[c("Getting_Information_Imp","Getting_Information_Level"),
+                    c("Getting_Information_Imp","Getting_Information_Level")],2)
+round(onet_data_cor[c("Identifying_Objects_Actions_and_Events_Imp",
+                      "Identifying_Objects_Actions_and_Events_Level"),
+                    c("Identifying_Objects_Actions_and_Events_Imp", 
+                      "Identifying_Objects_Actions_and_Events_Level")],2)
+round(onet_data_cor[c("Selective_Attention_Imp","Selective_Attention_Level"),
+                    c("Selective_Attention_Imp","Selective_Attention_Level")],2)
+
+# So we drop the "level" job characteristics to prevent multicollinearity
+onet_data_no_redund <- onet_data %>% dplyr::select(-ends_with("_Level"))
+# In doing so, we reduce the total number of characteristics to be evaluated
+# number of characteristics before:
+dim(onet_data)
+# number of characteristics  after:
+dim(onet_data_no_redund)
+# number of characteristics dropped:
+dim(onet_data)[2]-dim(onet_data_no_redund)[2]
+
+# Then we import the file containing codings of the job characteristics. These include codings 
+# of the characteristics as either psychological or physical in nature (used further down), 
+# as well as codings of highly redundant pairs (beyond the "level" and "importance" distinction handled above).
+codings <- import(paste(wdpath, "data/study1/onet/onet_varnames_char_types.csv", sep = ""))
+
+# The highly redundant pairs (r>.9) were identified based on discussion among coders (DMC & BH)
+varsToDrop <- codings %>% dplyr::filter(drop == "1") # This removes 7 additional items
+# Show the characteristics to be dropped:
+varsToDrop[,1]
+
+# Now drop them (the corresponding ``level'' characteristics were already dropped above)
+onet_data_no_redund <- onet_data_no_redund[, !names(onet_data_no_redund) %in% varsToDrop$char_name]
+dim(onet_data_no_redund)
+
+# Load the occupational ratings by job
+CrosswalkTable <- suppressWarnings(read.csv(paste(wdpath, "data/study1/onet/PrestigeRtgsCrosswalk28apr2021.csv", sep=""),
+                                            header=TRUE))
+
+# Clean them up and map them to the CRA data
+CrosswalkTable$O.NET.SOC.2010.Code <- str_replace_all(CrosswalkTable$O.NET.SOC.2010.Code, "[^[:alnum:]]", "")
+
+CRA_OPR <- inner_join(CRA_data, CrosswalkTable, by = "SAPA.Job.Title")
+colnames(CRA_OPR)[c(findcolnumber(CRA_OPR, "O.NET.SOC.2010.Code"))] <- "occ_code"
+CRA_OPR$occ_code <- as.numeric(CRA_OPR$occ_code)
+CRA_OPR <- subset(CRA_OPR, select = c(occ_code, occupation, CRA_Score, n, SAPA.Job.Title, OPR.Jobs.2016))
+colnames(CRA_OPR)[c(findcolnumber(CRA_OPR, "OPR.Jobs.2016"))] <- "Occupational_Prestige"
+
+CRA_OPR_onet <- left_join(onet_data_no_redund, CRA_OPR, by = "occ_code")
+# remove duplicated rows
+CRA_OPR_onet <- CRA_OPR_onet %>% distinct()
+
+# Edit the _Imp labels for easier reading and table production
+names(CRA_OPR_onet) = gsub("_Imp", "", names(CRA_OPR_onet))
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study1.25, eval=TRUE, echo=TRUE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+bs_all <- bestScales(CRA_OPR_onet[,c(2:ncol(CRA_OPR_onet))], criteria = cs(CRA_Score), 
+           cut = .0, n.item = 100, n.iter = 1000, 
+           overlap = FALSE, check = TRUE, impute = "none", digits = 2) 
+
+bs_all_df <- as.data.frame(bs_all$items$CRA_Score)
+least <- bs_all_df[order(bs_all_df$mean.r),][1:40,]
+most <- bs_all_df[order(-bs_all_df$mean.r),][1:40,]
+
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study1.26, eval=TRUE, echo=FALSE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(most))
+comment$command <- c(paste("\\hline\n", sep = ""))
+
+mostTable <- xtable(most, digits=0, caption='Job characteristics sorted by association with CRA scores (top 40)',
+                    label='tab:most')
+align(mostTable) <- "lrrr"
+digits(mostTable) <- c(0,0,2,2)
+print(mostTable, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+
+leastTable <- xtable(least, digits=0, caption='Job characteristics sorted by association with CRA scores (bottom 40)',
+                     label='tab:least')
+align(leastTable) <- "lrrr"
+digits(leastTable) <- c(0,0,2,2)
+print(leastTable, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+@
+\end{scriptsize}
+
+Tables \ref{tab:majors10} and \ref{tab:occupations10} show the university majors and jobs, respectively, that are most and least associated with scores on the new CRA items among respondents who gave information about their majors and jobs. Both tables are sorted in descending order by CRA percentile, and the tables show ICAR percentile scores for 6 additional cognitive ability domains (Letter-Number Series, Matrix Reasoning, Three Dimensional Rotation, Verbal Reasoning, Figural Analogies, and Propositional Reasoning). For the majors, most of the top 10 were majors that draw heavily on language skills and, presumably, strong vocabularies. The same theme was present for the occupations as well, though there was a slightly broader representation of jobs involving a high general level of education, including 3 university faculty jobs, physicists, and economists in addition to editors, writers, and librarians.
+
+Tables \ref{tab:most} and \ref{tab:least} show the O*NET job characteristics that are most and least, respectively, associated with scores on the new CRA items among respondents who gave information about their jobs. As described in the main manuscript, the job characteristics are collected by O*NET directly; the analyses are based on the BISCUIT technique \citep{Elleman:2020} using 1,000 bootstrapped iterations. Here again, the job characteristics most highly associated with CRA scores include strong language skills, especially reading and writing. The job characteristics least associated with CRA scores are entirely represented by physical tasks unrelated to communication and language.
+
+\section{Study 2}
+
+The aim of Study 2 was to validate the new CRA item set from Study 1 in a student sample relative to academic achievement measures, and to evaluate the effects of response format (open-ended vs multiple-choice) and item type (CRAT vs new CRA items). Data were collected from an undergraduate sample at \textbf{[blinded for review]}, starting on September 30, 2020 and ending on March 21, 2021. These data are available on OSF (\href{tinyurl.com/2a8vx6n8}{tinyurl.com/2a8vx6n8}) in a file labeled 'Study2data.csv'. In the subsections below, we describe the steps for loading and cleaning the data, and carrying out the planned analyses.
+
+\subsection{Data wrangling}
+
+Begin by loading, cleaning, and scoring the data. Note that the data have already been de-identified, and that responses to the individual items have already been scored as correct (1) or incorrect (0). Half of the items were given using an open-response format, and these were coded manually by the first author. As the respondents were undergraduates participating for course credit, they were given the option of not responding. Items that were skipped or marked as ``I don't know'' were scored as incorrect.
+
+To score the items, two approaches are used. For the open-ended response format, we used sum/mean scores, scoring separately for the new CRA item content and for the existing CRAT content. For the multiple choice response format, we used sum/mean scores and IRT scoring based on the item calibrations identified in Study 1. This meant that some items were dropped due to psychometric properties, as described in Study 1. Note also that two of the items administered in Study 1 were missing from this data set: item q\_14012 was omitted from data collection due to a coding error and item q\_14125 was used as an example item in this data collection.
+
+\begin{scriptsize}
+<<Study2.1, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+rm(list=ls()[!(ls() %in% c('findcolnumber', 'keys.list', 'wdpath', 'score_ICAR_IRT', 'CRAitemNumbersStudy1'))])
+
+# Load the de-identified data file. The raw data file has been cleaned to 
+# remove identifying data that is automatically collected by Qualtrics.
+study2data <- read.csv(paste(wdpath, "data/study2/study2data.csv", sep=""), header=TRUE)
+#study2data <- read.csv("OnlineSupplement/data/study2/study2data.csv", header=TRUE)
+
+# Drop participants who self-report low English-language fluency
+study2data <- study2data[study2data$English_Fluency != "Not well", ]
+
+# Get the sum scores for the open-ended response format for the new CRA item content
+study2data$meanScore_CRAopen <- rowMeans(study2data[,c(findcolnumber(study2data, "q_14003_CRA_open1scored"):
+                                                  findcolnumber(study2data, "q_14197_CRA_open65scored"))],
+                                                  na.rm = TRUE)
+# Get the sum scores for the open-ended response format for the older CRAT items
+study2data$meanScore_CRATopen <- rowMeans(study2data[,c(findcolnumber(study2data, "q_14289_CRAT_open1scored"):
+                                                  findcolnumber(study2data, "q_14318_CRAT_open30scored"))],
+                                                  na.rm = TRUE)
+# Get the sum scores for the multiple choice response format for the new CRA item content
+study2data$meanScore_CRA_MC <- rowMeans(study2data[,c(findcolnumber(study2data, "q_14003_CRA_MC1scored"):
+                                                  findcolnumber(study2data, "q_14197_CRA_MC65scored"))],
+                                                  na.rm = TRUE)
+# Get the sum scores for the multiple choice response format for the older CRAT items
+study2data$meanScore_CRAT_MC <- rowMeans(study2data[,c(findcolnumber(study2data, "q_14289_CRAT_MC1scored"):
+                                                  findcolnumber(study2data, "q_14318_CRAT_MC30scored"))],
+                                                  na.rm = TRUE)
+
+# Getting alpha and omega for each 
+
+# CRA open 
+tetrachor_CRAopen <- suppressWarnings(tetrachoric(study2data[,c(findcolnumber(study2data, "q_14003_CRA_open1scored"):
+        findcolnumber(study2data, "q_14197_CRA_open65scored"))], smooth = TRUE))
+
+tetrachor_CRAopen <- tetrachor_CRAopen$rho
+omega_CRAopen <- suppressWarnings(psych::omega(tetrachor_CRAopen, plot = FALSE))
+round(omega_CRAopen$alpha,2)
+round(omega_CRAopen$omega.tot,2)
+
+
+# CRAT open
+tetrachor_CRATopen <- suppressWarnings(tetrachoric(study2data[,c(findcolnumber(study2data, "q_14289_CRAT_open1scored"):
+    findcolnumber(study2data, "q_14318_CRAT_open30scored"))], smooth = TRUE))
+
+tetrachor_CRATopen <- tetrachor_CRATopen$rho
+omega_CRATopen <- suppressWarnings(psych::omega(tetrachor_CRATopen, plot = FALSE))
+round(omega_CRATopen$alpha,2)
+round(omega_CRATopen$omega.tot,2)
+
+
+# CRA multiple-choice
+tetrachor_CRAmc <- suppressWarnings(tetrachoric(study2data[,c(findcolnumber(study2data, "q_14003_CRA_MC1scored"):
+    findcolnumber(study2data, "q_14197_CRA_MC65scored"))], smooth = TRUE))
+
+tetrachor_CRAmc <- tetrachor_CRAmc$rho
+omega_CRAmc <- suppressWarnings(psych::omega(tetrachor_CRAmc, plot = FALSE))
+round(omega_CRAmc$alpha,2)
+round(omega_CRAmc$omega.tot,2)
+
+# CRAT multiple-choice
+tetrachor_CRATmc <- suppressWarnings(tetrachoric(study2data[,c(findcolnumber(study2data, "q_14289_CRAT_MC1scored"):
+    findcolnumber(study2data, "q_14318_CRAT_MC30scored"))], smooth = TRUE))
+
+tetrachor_CRATmc <- tetrachor_CRATmc$rho
+omega_CRATmc <- suppressWarnings(psych::omega(tetrachor_CRATmc, plot = FALSE))
+round(omega_CRATmc$alpha,2)
+round(omega_CRATmc$omega.tot,2)
+
+# In addition to sum scoring, we also use IRT scoring for the MC version of the CRA and CRAT items
+# The calibrations for the IRT scores are based on the results of Study 1.
+
+# To IRT score the new CRA item set, two of the items need to be dropped based on psychometric 
+# evaluation in Study 1 (items 14043 and 14023). For the CRAT items, an additional 7 items also 
+# should be left out.
+MCitemsForIRT <- study2data[,-c(findcolnumber(study2data, "q_14023_CRA_MC11scored"),
+                                  findcolnumber(study2data, "q_14043_CRA_MC15scored"),
+                                  findcolnumber(study2data, "q_14307_CRAT_MC19scored"),
+                                  findcolnumber(study2data, "q_14308_CRAT_MC20scored"),
+                                  findcolnumber(study2data, "q_14310_CRAT_MC22scored"),
+                                  findcolnumber(study2data, "q_14315_CRAT_MC27scored"),
+                                  findcolnumber(study2data, "q_14317_CRAT_MC29scored"),
+                                  findcolnumber(study2data, "q_14318_CRAT_MC30scored"),
+                                  findcolnumber(study2data, "q_14298_CRAT_MC30scored")
+                                  )]
+
+# Isolate the new CRA items to IRT score
+CRAitemSetFinal <- MCitemsForIRT[,c(findcolnumber(MCitemsForIRT, "q_14003_CRA_MC1scored"):
+                              findcolnumber(MCitemsForIRT, "q_14197_CRA_MC65scored"))]
+# Align the item labels
+names(CRAitemSetFinal) <- substring(names(CRAitemSetFinal), 1, 7)
+
+# Now load the IRT model and IRT score
+load(file = paste(wdpath, "data/study1/IRTmodelCRAnewItems.rdata", sep = ""))
+#load(file = "OnlineSupplement/data/study1/IRTmodelCRAnewItems.rdata")
+
+CRAitemSetFinal = score_ICAR_IRT(dataset = CRAitemSetFinal, IRT_model = IRT_model_ICAR_CRAnew, t_score = FALSE)
+marginal_rxx(IRT_model_ICAR_CRAnew)
+
+# Isolate the CRAT items to IRT score
+CRATitemSetFinal <- MCitemsForIRT[,c(findcolnumber(MCitemsForIRT, "q_14289_CRAT_MC1scored"):
+                              findcolnumber(MCitemsForIRT, "q_14316_CRAT_MC28scored"))]
+# Align the item labels
+names(CRATitemSetFinal) <- substring(names(CRATitemSetFinal), 1, 7)
+
+# Now load the IRT model and IRT score
+load(file = paste(wdpath, "data/study1/IRTmodelCRATitems.rdata", sep = ""))
+#load(file = "OnlineSupplement/data/study1/IRTmodelCRATitems.rdata")
+
+CRATitemSetFinal = score_ICAR_IRT(dataset = CRATitemSetFinal, IRT_model = IRT_model_CRAT, t_score = FALSE)
+marginal_rxx(IRT_model_CRAT)
+
+# Tack the IRT scores onto the full data frame for Study 2
+study2data <- data.frame(study2data, CRAitemSetFinal$ICAR_CRA, CRAitemSetFinal$SE_ICAR_CRA,
+                         CRATitemSetFinal$CRAT, CRATitemSetFinal$SE_CRAT)
+
+names(study2data)[names(study2data) == 'CRAitemSetFinal.ICAR_CRA'] <- 'IRTscore_CRA_MC'
+names(study2data)[names(study2data) == 'CRAitemSetFinal.SE_ICAR_CRA'] <- 'IRTscore_CRA_MC_SE'
+names(study2data)[names(study2data) == 'CRATitemSetFinal.CRAT'] <- 'IRTscore_CRAT_MC'
+names(study2data)[names(study2data) == 'CRATitemSetFinal.SE_CRAT'] <- 'IRTscore_CRAT_MC_SE'
+
+# Save objects out for later use
+study2dataCRAonly <- subset(CRAitemSetFinal, select = c(q_14003:q_14197))
+CRAitemNumbersStudy2 <- colnames(study2dataCRAonly)
+save(study2dataCRAonly, CRAitemNumbersStudy2, file = paste(wdpath, "data/study2/CRAdataStudy2.rdata", sep = ""))
+
+# Compare the two methods for scoring the multiple choice responses
+compareScoringMethodCor <- round(cor(study2data[,c("meanScore_CRA_MC", "meanScore_CRAT_MC", 
+                                "IRTscore_CRA_MC", "IRTscore_CRAT_MC")], use="pairwise"), 2)
+compareScoringMethodCor
+@
+\end{scriptsize}
+
+Results suggest that the two methods for scoring the multiple choice items are similar but not identical. The associations among the mean and IRT scores for the new CRA items is \Sexpr{compareScoringMethodCor["meanScore_CRA_MC", "IRTscore_CRA_MC"]}, and \Sexpr{compareScoringMethodCor["meanScore_CRAT_MC", "IRTscore_CRAT_MC"]} for the CRAT items. Though high, the correlations would likely be higher still if the items were more fully overlapping (recall that some items were omitted from both sets, mainly due to the removal of items with relatively poor psychometric properties when calculating the IRT scores). The correlations between the new CRA items and the CRAT items are similar regardless of scoring method (\Sexpr{compareScoringMethodCor["meanScore_CRA_MC", "meanScore_CRAT_MC"]} for mean scores and \Sexpr{compareScoringMethodCor["IRTscore_CRA_MC", "IRTscore_CRAT_MC"]} for IRT scores). Given the availability of the IRT calibrations, we recommend this method and will use these scores for all subsequent analyses in Studies 2 and 3.
+
+\subsection{Descriptive statistics}
+
+Now that the data have been wrangled into shape, the next code chunk describes the sample (N $=$ \Sexpr{as.numeric(describe(study2data$Age)["n"])}) and key variables before moving on to the validation analyses.
+
+\begin{scriptsize}
+<<Study2.2, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# Scrub the data to remove implausible/impossible values for self reports of test scores and GPA
+study2data <- psych::scrub(study2data, where = "ACT_Composite_Score", min = 1, max = 36)
+study2data <- psych::scrub(study2data, where = "SAT_RW_Score", min = 400, max = 800)
+study2data <- psych::scrub(study2data, where = "SAT_M_Score", min = 400, max = 800)
+study2data <- psych::scrub(study2data, where = "GPA", min = 0, max = 5)
+study2data$Ethnicity <- str_replace(study2data$Ethnicity, "Some other ethnicity or origin, please specify:", "Other")
+study2data$Ethnicity <- str_replace(study2data$Ethnicity, "I prefer not to answer.", "Prefer not to say")
+
+descriptives <- describe(study2data)
+
+ESL <- data.frame(table(study2data$English_First_Language)[2:3])
+colnames(ESL) <- c("English 1st Language?", "Participants")
+ESL$Percentage <- round(ESL$Participants/sum(ESL$Participants)*100,2)
+
+english <- data.frame(table(study2data$English_Fluency)[c(2,1)])
+colnames(english) <- c("English fluency", "Participants")
+english$Percentage <- round(english$Participants/sum(english$Participants)*100,2)
+
+edu <- data.frame(table(study2data$Education)[c(4,3,5,1,2)])
+colnames(edu) <- c("Educational Attainment Level", "Participants")
+edu$Percentage <- round(edu$Participants/sum(edu$Participants)*100,2)
+
+income <- data.frame(table(study2data$Income)[c(12,5,9,10,11,2,3,4,6,7,8,13,14)])
+colnames(income) <- c("Household Income", "Participants")
+income$Percentage <- round(income$Participants/sum(income$Participants)*100,2)
+
+gender <- data.frame(table(study2data$Gender_Identity))
+colnames(gender) <- c("Gender Identity", "Participants")
+gender$Percentage <- round(gender$Participants/sum(gender$Participants)*100,2)
+
+ethnicity <- data.frame(table(study2data$Ethnicity)[c(1:6,9,7,8)])
+colnames(ethnicity) <- c("Race/Ethnicity", "Participants")
+ethnicity$Percentage <- round(ethnicity$Participants/sum(ethnicity$Participants)*100,2)
+
+descriptives[c("Age", "Duration_Minutes", "SAT_RW_Score", "SAT_M_Score", "ACT_Composite_Score", "GPA",
+               "meanScore_CRAopen", "meanScore_CRATopen", "IRTscore_CRA_MC", "IRTscore_CRA_MC_SE",
+               "IRTscore_CRAT_MC", "IRTscore_CRAT_MC_SE"),c("n","mean","sd", "median", "min", "max")]
+@
+\end{scriptsize}
+
+Descriptive statistics for (most of) the continuous variables (i.e., age, test scores, CRA scores) are described as output in the chunk above. Note that these include the standard errors for the IRT scores of the new CRA scale (\textit{m} $=$ \Sexpr{round(descriptives["IRTscore_CRA_MC_SE","mean"],2)}) and the CRAT scale (\textit{m} $=$ \Sexpr{round(descriptives["IRTscore_CRAT_MC_SE","mean"],2)}). Categorical variables are described in Tables \ref{tab:ESL} to \ref{tab:ethnicity}. 
+
+\begin{scriptsize} \begin{table}[htp]\caption{English as a first language in the Study 2 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline English 1st Language?  &  Participants & Percentage\cr 
+  \hline 
+No  & \Sexpr{prettyNum(ESL[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ESL[1,3], big.mark=",", scientific=F)} \cr 
+Yes & \Sexpr{prettyNum(ESL[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ESL[2,3], big.mark=",", scientific=F)} \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:ESL}
+\end{table} 
+\end{scriptsize}
+
+\begin{scriptsize} \begin{table}[htp]\caption{English fluency in the Study 2 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline English fluency  &  Participants & Percentage\cr 
+  \hline 
+Well & \Sexpr{prettyNum(english[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(english[1,3], big.mark=",", scientific=F)} \cr
+Very well (fluent/native) & \Sexpr{prettyNum(english[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(english[2,3], big.mark=",", scientific=F)} \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:english}
+\end{table} 
+\end{scriptsize}
+
+\begin{scriptsize} \begin{table}[htp]\caption{Educational attainment in the Study 2 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Educational attainment level  &  Participants & Percentage\cr 
+  \hline 
+High school graduate/GED  & \Sexpr{prettyNum(edu[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[1,3], big.mark=",", scientific=F)}\% \cr 
+Currently in college/university & \Sexpr{prettyNum(edu[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[2,3], big.mark=",", scientific=F)}\% \cr
+Some college/university, but did not graduate & \Sexpr{prettyNum(edu[3,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[3,3], big.mark=",", scientific=F)}\% \cr
+Associate degree & \Sexpr{prettyNum(edu[4,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[4,3], big.mark=",", scientific=F)}\% \cr
+College/university degree & \Sexpr{prettyNum(edu[5,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[5,3], big.mark=",", scientific=F)}\% \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:edu}
+\end{table} 
+\end{scriptsize}
+
+\begin{scriptsize} \begin{table}[htp]\caption{Household income in the Study 2 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Household income (annual) &  Participants & Percentage\cr 
+  \hline 
+Less than 20,000 & \Sexpr{prettyNum(income[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[1,3], big.mark=",", scientific=F)}\% \cr 
+20,000 to 40,000 & \Sexpr{prettyNum(income[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[2,3], big.mark=",", scientific=F)}\% \cr
+40,000 to 60,000 & \Sexpr{prettyNum(income[3,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[3,3], big.mark=",", scientific=F)}\% \cr
+60,000 to 80,000 & \Sexpr{prettyNum(income[4,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[4,3], big.mark=",", scientific=F)}\% \cr
+80,000 to 100,000 & \Sexpr{prettyNum(income[5,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[5,3], big.mark=",", scientific=F)}\% \cr
+100,000 to 120,000 & \Sexpr{prettyNum(income[6,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[6,3], big.mark=",", scientific=F)}\% \cr
+120,000 to 150,000 & \Sexpr{prettyNum(income[7,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[7,3], big.mark=",", scientific=F)}\% \cr
+150,000 to 200,000 & \Sexpr{prettyNum(income[8,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[8,3], big.mark=",", scientific=F)}\% \cr
+200,000 to 250,000 & \Sexpr{prettyNum(income[9,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[9,3], big.mark=",", scientific=F)}\% \cr
+250,000 to 350,000 & \Sexpr{prettyNum(income[10,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[10,3], big.mark=",", scientific=F)}\% \cr
+350,000 to 500,000 & \Sexpr{prettyNum(income[11,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[11,3], big.mark=",", scientific=F)}\% \cr
+More than 500,000 & \Sexpr{prettyNum(income[12,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[12,3], big.mark=",", scientific=F)}\% \cr
+Prefer not to say & \Sexpr{prettyNum(income[13,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[13,3], big.mark=",", scientific=F)}\% \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:income}
+\end{table} 
+\end{scriptsize}
+
+\begin{scriptsize} \begin{table}[htp]\caption{Gender identity in the Study 2 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Gender identity &  Participants & Percentage\cr 
+  \hline 
+Female & \Sexpr{prettyNum(gender[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[1,3], big.mark=",", scientific=F)}\% \cr 
+Male & \Sexpr{prettyNum(gender[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[2,3], big.mark=",", scientific=F)}\% \cr
+Non-binary & \Sexpr{prettyNum(gender[3,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[3,3], big.mark=",", scientific=F)}\% \cr
+Prefer not to say & \Sexpr{prettyNum(gender[4,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[4,3], big.mark=",", scientific=F)}\% \cr
+Prefer to self-describe & \Sexpr{prettyNum(gender[5,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[5,3], big.mark=",", scientific=F)}\% \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:gender}
+\end{table} 
+\end{scriptsize}
+
+\begin{scriptsize} \begin{table}[htp]\caption{Race/ethnicity in the Study 2 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Race/ethnicity &  Participants & Percentage\cr 
+  \hline 
+American Indian or Alaska Native & \Sexpr{prettyNum(ethnicity[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[1,3], big.mark=",", scientific=F)}\% \cr 
+Asian & \Sexpr{prettyNum(ethnicity[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[2,3], big.mark=",", scientific=F)}\% \cr
+Black or African American & \Sexpr{prettyNum(ethnicity[3,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[3,3], big.mark=",", scientific=F)}\% \cr
+Hispanic, Latinx or Spanish Origin & \Sexpr{prettyNum(ethnicity[4,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[4,3], big.mark=",", scientific=F)}\% \cr
+Middle Eastern or North African & \Sexpr{prettyNum(ethnicity[5,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[5,3], big.mark=",", scientific=F)}\% \cr
+Native Hawaiian or Other Pacific Islander & \Sexpr{prettyNum(ethnicity[6,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[6,3], big.mark=",", scientific=F)}\% \cr
+White & \Sexpr{prettyNum(ethnicity[7,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[7,3], big.mark=",", scientific=F)}\% \cr
+Other & \Sexpr{prettyNum(ethnicity[8,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[8,3], big.mark=",", scientific=F)}\% \cr
+Prefer not to say & \Sexpr{prettyNum(ethnicity[9,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(ethnicity[9,3], big.mark=",", scientific=F)}\% \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:ethnicity}
+\end{table} 
+\end{scriptsize}
+
+
+\subsection{Correlations among CRA scores, GPA, and standardized test scores}
+
+The preregistration specified that correlations would be reported (in the main manuscript) if there were at least 200 pairwise observations. The number of observations was not above this threshold for the SAT verbal (\Sexpr{descriptives["SAT_RW_Score",]$n}) or SAT math (\Sexpr{descriptives["SAT_M_Score",]$n}) scores, but the ACT composite scores (N = \Sexpr{descriptives["ACT_Composite_Score",]$n}) and GPAs were more than adequate (N = \Sexpr{descriptives["GPA",]$n}). These analyses are run in the following code chunk and shown at the end.
+
+\begin{scriptsize}
+<<Study2.3, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# Subset the relevant scores from the main data set
+scoresSubset <- subset(study2data, select = c(SAT_RW_Score, SAT_M_Score, ACT_Composite_Score,
+                                              GPA, meanScore_CRAopen, meanScore_CRATopen,
+                                              IRTscore_CRA_MC, IRTscore_CRAT_MC))
+scoresCor <- cor.ci(scoresSubset, plot = FALSE)
+
+# But only some of these should be reported given the preregistration
+scoresSubset2 <- subset(study2data, select = c(ACT_Composite_Score, GPA, 
+                                               meanScore_CRAopen, meanScore_CRATopen,
+                                              IRTscore_CRA_MC, IRTscore_CRAT_MC))
+scoresCor2 <- cor.ci(scoresSubset2, plot = FALSE)
+
+# Get the correlations
+cors <- round(scoresCor2$rho, 2)
+# and the 95% confidence intervals
+CIs <- round(scoresCor2$ci[,c("lower", "upper", "p")], 3)
+cors
+CIs
+
+# Comparing correlations 
+
+# Are correlations for ACT with open ended vs mc response format significantly different?
+corr.test(scoresSubset$ACT_Composite_Score, scoresSubset$meanScore_CRAopen, use = "pairwise")
+corr.test(scoresSubset$ACT_Composite_Score, scoresSubset$IRTscore_CRA_MC, use = "pairwise")
+paired.r(0.33, 0.19, n=213, n2=210, twotailed=TRUE)
+
+# Are correlations for GPA with open ended vs mc response format significantly different?
+corr.test(scoresSubset$GPA, scoresSubset$meanScore_CRAopen, use = "pairwise")
+corr.test(scoresSubset$GPA, scoresSubset$IRTscore_CRA_MC, use = "pairwise")
+paired.r(0.14, 0.17, n=452, n2=446, twotailed=TRUE)
+
+# Are correlations for item sets of the same response format significantly different?
+corr.test(scoresSubset$meanScore_CRAopen, scoresSubset$meanScore_CRATopen, use = "pairwise")
+corr.test(scoresSubset$IRTscore_CRA_MC, scoresSubset$IRTscore_CRAT_MC, use = "pairwise")
+paired.r(0.44, 0.48, n=675, n2=673, twotailed=TRUE)
+
+# Are correlations for the same items sets, using different response formats, significantly different?
+corr.test(scoresSubset$meanScore_CRAopen, scoresSubset$IRTscore_CRA_MC, use = "pairwise")
+corr.test(scoresSubset$meanScore_CRATopen, scoresSubset$IRTscore_CRAT_MC, use = "pairwise")
+paired.r(0.36, 0.43, n=675, n2=673, twotailed=TRUE)
+@
+\end{scriptsize}
+
+ACT composite score was significantly correlated with both CRA and CRAT item scores across response modes (i.e., multiple-choice and open-ended), but correlations were stronger when using the open-ended response mode. GPA showed significant correlations with CRA item scores when using both multiple-choice and open-ended response mode. The correlation between GPA and CRAT item scores was significant when using a multiple-choice response mode but not when using an open-ended response mode. The difference in the magnitudes of the correlations across response choices for the ACT only (i.e., not GPA) may have reflected the greater difficulty of the open-ended response method (see below), as there is considerable evidence that the ACT and other standardized tests are more direct measures of cognitive ability than GPA \citep{Galla:2019}. GPA, by contrast, is also affected by other aspects of personality (e.g., self-regulation skills).
+
+All correlations between the same measure when using different response modes (e.g., multiple-choice CRA items and open-ended CRA items), and different measures using the same response mode (e.g., open-ended CRA items and open-ended CRAT items) were significant. The strongest relationship across combinations of measure (CRA and CRAT) and response mode (multiple-choice and open-ended) emerged between the CRA and CRAT items using the multiple-choice format. This could be due to both the relative ease of solving the multiple-choice items and the greater precision afforded by IRT scoring, which was not possible for the open-ended items.
+
+Note that exploratory analyses of the correlations with SAT verbal scores were statistically significant for the new CRA items with the open-ended response format (\textit{r}$=$.25, \textit{p}$=$.01) and for the IRT-scored multiple-choice format (\textit{r}$=$.29, \textit{p}$=$.006), despite the small sample size. None of the other SAT correlations were statistically significant (\textit{p}$<$.05).
+
+\subsection{Effects of response format and problem set}
+
+In order to evaluate the effect of response format (open-ended vs multiple choice) and of problem set (CRAT vs new CRA items), it is first necessary to pivot the data into long format (i.e., one row for each item for each participant). This is done below, along with dummy coding according to response and problem type.
+
+\begin{scriptsize}
+<<Study2.4, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# Getting the data into long form
+Study2_Data_Long <- study2data %>%
+                    pivot_longer(cols = c(q_14003_CRA_open1scored:q_14318_CRAT_MC30scored),
+                    names_to = "Item",
+                    values_to = "Score")
+# Creating dummy variables for problem set and response mode
+Study2_Data_Long <- Study2_Data_Long %>%
+                    mutate(Set = ifelse(str_detect(Item, "CRAT"), 0, 1),
+                    Format = ifelse(str_detect(Item, "open"), 0, 1))
+# Problem set and response mode variables as factors
+Study2_Data_Long$Set <- factor(Study2_Data_Long$Set,
+                             levels = c(0,1),
+                             labels = c("CRAT","CRA"))
+Study2_Data_Long$Format <- factor(Study2_Data_Long$Format,
+                             levels = c(0,1),
+                             labels = c("Open-ended","Multiple-choice"))
+@
+\end{scriptsize}
+
+Then, we begin by modelling just the main effects of (1) problem set (CRAT vs CRA) and (2) response format (open-ended vs multiple-choice). This is done in the code chunk below, using a binary logitistic multilevel model with item scores predicted by `set' and `format'. 
+
+\begin{scriptsize}
+<<Study2.5, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+Format_Model_main <- glmer(Score ~ Format + Set + (1 | ResponseId), data = Study2_Data_Long, family = "binomial")
+summary(Format_Model_main)
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study2.6, eval=TRUE, echo=FALSE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# tables of estimates with 95% CI
+se_main <- sqrt(diag(vcov(Format_Model_main)))
+tab_main <- cbind(Est = lme4::fixef(Format_Model_main), 
+                  lowerCI = lme4::fixef(Format_Model_main) - 1.96 * se_main, 
+                  upperCI = lme4::fixef(Format_Model_main) + 1.96 * se_main)
+tab_main <- as.data.frame(tab_main)
+tab_main$OR <- exp(tab_main$Est)
+
+colnames(tab_main) <- c("Estimate", "CI lower", "CI upper", "Odds Ratio")
+rownames(tab_main) <- c("Intercept", "Response Format (Open vs MC)", "Problem Set (CRAT v CRA)")
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(tab_main))
+comment$command <- c(paste("\\hline\n",
+                          "\\multicolumn{5}{l}{Notes: The estimate values are the logistic regression coefficients. CI lower}\\\\\n",
+                          "\\multicolumn{5}{l}{and upper represent the bounds of the 95 confidence interval.}\\\\\n",
+                          "\\multicolumn{5}{l}{Reference group is open-ended CRAT items.}\\\\\n", sep = ""))
+
+tab_main <- xtable(tab_main, digits=0, caption='Model summary testing the main effects', label='tab:modelmain')
+align(tab_main) <- "lcccc"
+digits(tab_main) <- c(0,2,2,2,2)
+print(tab_main, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+
+Format_plot_main <- ggpredict(Format_Model_main, c("Format", "Set")) %>% 
+  ggplot(aes(x = x, y = predicted, group = group)) +
+  geom_bar(stat = "identity", aes(fill = group), position = position_dodge(.9)) +
+  geom_errorbar(aes(ymin = conf.high, ymax = conf.low),
+                width = .5, 
+                position = position_dodge(.9)) +
+    labs(
+        x = "Response Format",
+        y = "Probability of a Correct Response",
+        title = "",
+        fill = "Problem Set") + 
+  theme_bw() +
+    theme(axis.text.x = element_text(color="black", size=8),
+          axis.title.x = element_text(colour = "black", size = 10),
+          axis.text.y = element_text(color="black", size=8),
+          axis.title.y = element_text(colour = "black", size = 10), 
+          legend.position = "top")
+    ggsave(filename = paste(wdpath, "figure/modelmain.png", sep=""), scale = 1, width = 7, height = 5, units = c("in"), dpi = 300)
+@
+\end{scriptsize}
+
+
+A summary of the results are shown in the code and output above, as well as in Table \ref{tab:modelmain}. The odds ratio values indicate that the change in odds of correctly responding to the items increases by \Sexpr{round(tab_main[2,4], 2)} from CRAT items with an open-ended response format to CRAT items with a multiple-choice format. The odds decrease when going from CRAT items to the new CRA items (odds are \Sexpr{round(tab_main[3,4], 2)}). These results are also reflected in Figure \ref{fig:modelmain}.
+
+\begin{figure}
+\begin{floatrow}
+\ffigbox{\includegraphics[width=.65\textwidth]{figure/modelmain.png}}{\caption{Effects of response format and item type on CRA scores}\label{fig:modelmain}}
+\end{floatrow}
+\end{figure}
+
+To follow up on the main effects analysis, we then identify a model that also includes the interaction effect between problem format and problem set. The next code chunk shows the results.
+
+\begin{scriptsize}
+<<Study2.7, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+Format_Model_interaction <- glmer(Score ~ Format*Set + (1 | ResponseId), data = Study2_Data_Long, family = "binomial")
+summary(Format_Model_interaction)
+
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study2.8, eval=TRUE, echo=FALSE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# tables of estimates with 95% CI
+se_interaction <- sqrt(diag(vcov(Format_Model_interaction)))
+tab_interaction <- cbind(Est = lme4::fixef(Format_Model_interaction), 
+                         lowerCI = lme4::fixef(Format_Model_interaction) - 1.96 * se_interaction, 
+                         upperCI = lme4::fixef(Format_Model_interaction) + 1.96 * se_interaction)
+tab_interaction <- as.data.frame(tab_interaction)
+tab_interaction$OR <- exp(tab_interaction$Est)
+
+colnames(tab_interaction) <- c("Estimate", "CI lower", "CI upper", "Odds Ratio")
+rownames(tab_interaction) <- c("(Intercept)", "Response Format (Open vs MC)", "Problem Set (CRAT v CRA)", "Interaction")
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(tab_interaction))
+comment$command <- c(paste("\\hline\n",
+                          "\\multicolumn{5}{l}{Notes: The estimate values are the logistic regression coefficients. CI lower}\\\\\n",
+                          "\\multicolumn{5}{l}{and upper represent the bounds of the 95 confidence interval.}\\\\\n", sep = ""))
+
+tab_interaction <- xtable(tab_interaction, digits=0, caption='Model summary testing the main effects and interaction', label='tab:modelinter')
+align(tab_interaction) <- "lcccc"
+digits(tab_interaction) <- c(0,2,2,2,2)
+print(tab_interaction, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+
+Format_plot_inter <- ggpredict(Format_Model_interaction, c("Format", "Set")) %>% 
+  ggplot(aes(x = x, y = predicted, group = group)) +
+  geom_bar(stat = "identity", aes(fill = group), position = position_dodge(.9)) +
+  geom_errorbar(aes(ymin = conf.high, ymax = conf.low),
+                width = .5, 
+                position = position_dodge(.9)) +
+    labs(
+        x = "Response Format",
+        y = "Probability of a Correct Response",
+        title = "",
+        fill = "Problem Set") + 
+  theme_bw() +
+    theme(axis.text.x = element_text(color="black", size=8),
+          axis.title.x = element_text(colour = "black", size = 10),
+          axis.text.y = element_text(color="black", size=8),
+          axis.title.y = element_text(colour = "black", size = 10), 
+          legend.position = "top")
+    ggsave(filename = paste(wdpath, "figure/modelinter.png", sep=""), scale = 1, width = 7, height = 5, units = c("in"), dpi = 300)
+@
+\end{scriptsize}
+
+In this case, the results are similar (directionally) and there is a statistically significant effect of the interaction. (In practical terms, this also suggests that the main effects analysis is probably not an accurate representation of the true relationships tested.) Table \ref{tab:modelinter} shows the effects with the same reference groups (open-ended response format and CRAT problems). The odds ratios are \Sexpr{round(tab_interaction[1,4], 2)} for the effect of response choice format and \Sexpr{round(tab_interaction[2,4], 2)} for the effect of item content/type. Figure \ref{fig:modelinter} shows a plot of the model including the interaction effect.
+
+\begin{figure}
+\begin{floatrow}
+\ffigbox{\includegraphics[width=.65\textwidth]{figure/modelinter.png}}{\caption{Effects of response format and item type on CRA scores}\label{fig:modelinter}}
+\end{floatrow}
+\end{figure}
+
+\section{Study 3}
+
+The aim of Study 3 was to validate the new CRA item set from Study 1 in an additional (non-student) sample. In this case, the measures were cross-validated against measures of cognitive reflection \citep[using items from various versions of the Cognitive Reflection Task;][]{Frederick:2005, Primi:2016, Thomson:2016} and imagination \citep[using the Four-Factor Imagination Scales;][]{Zabelina:2020}. This sample was also used to evaluate test-retest reliability. Data were collected from a crowd-sourcing recruitment platform (\href{https://www.prolific.co/}{Prolific}) in February/March 2021 (see dates below). These data are available on OSF (\href{tinyurl.com/2a8vx6n8}{tinyurl.com/2a8vx6n8}) in a file labeled 'Study3data.csv'; as these data are considerably more involved than those in Study 2, we have also provided a codebook. In the following subsections, we describe the steps for loading and cleaning the data, and carrying out the planned analyses.
+
+\subsection{Data wrangling}
+
+Begin by loading, cleaning, and scoring the data. Note that the data have already been de-identified, and that responses to the individual items have already been scored as correct (1) or incorrect (0). 
+
+\begin{scriptsize}
+<<Study3.1, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+rm(list=ls()[!(ls() %in% c('findcolnumber', 'keys.list', 'wdpath', 'score_ICAR_IRT', 'CRAitemNumbersStudy1'))])
+
+# Load the de-identified data file. The raw data file has been cleaned to 
+# remove identifying data that is automatically collected by Qualtrics.
+
+# Note that the data for Study 3 are very involved; see the codebook file on OSF 
+# for more info about the nature and naming of variables (`Study3dataCodebook').
+study3data <- read.csv(paste(wdpath, "data/study3/study3data.csv", sep=""), header=TRUE)
+#study3data <- read.csv("OnlineSupplement/data/study3/study3data.csv", header=TRUE)
+study3data <- study3data[-c(1:2),]
+
+# change class of variables in character format (not sure why... qualtrics)
+cols.num <- colnames(study3data[,c(findcolnumber(study3data, "FFIS_F1"):
+                     findcolnumber(study3data, "FFIS_D5"),
+                     findcolnumber(study3data, "MultipleChoice_DO_q_14066_retest"):
+                     findcolnumber(study3data, "MultipleChoice_DO_q_14051_retest"))])
+study3data[cols.num] <- sapply(study3data[cols.num],as.numeric)
+
+# clean out unexpected handling of NAs for some cases in qualtrics
+study3data[cols.num] <- psych::scrub(study3data[cols.num], isvalue= c(-99))
+
+names(study3data)[3] <- 'duration' # relabel
+study3data$duration <- as.numeric(study3data[,"duration"]) # as numeric from character
+study3data$age <- as.numeric(study3data[,"age"]) # as numeric from character
+NbeforeDrops <- dim(study3data)[1]
+
+study3data <- subset(study3data, select = -c(RecordedDate, UserLanguage)) # drop as uninformative
+
+# Subset the data to remove respondents who self-report lower English fluency levels
+table(study3data$english)
+study3data <- study3data %>% dplyr::filter(english == "Well" | english == "Very well (fluent/native)")
+dim(study3data)
+
+# Fix the date formatting
+study3data[,"StartDate"] <- substr(study3data[,"StartDate"], 1, 7) # reformat the date columns
+study3data[,"StartDate"] <- as.Date(study3data$StartDate, "%m/%d/%y")
+study3data[,"EndDate"] <- substr(study3data[,"EndDate"], 1, 7) # reformat the date columns
+study3data[,"EndDate"] <- as.Date(study3data$EndDate, "%m/%d/%y")
+study3data[,"StartDate_retest"] <- as.Date(as.numeric(study3data$StartDate_retest), origin = '1900-01-01')
+study3data[,"EndDate_retest"] <- as.Date(as.numeric(study3data$EndDate_retest), origin = '1900-01-01')
+dim(study3data)
+
+# Subset the data to remove data collected outside the Prolific dates
+study3data <- study3data[study3data$StartDate >= "2021-02-23",]
+dim(study3data)
+Nactual <- dim(study3data)[1]
+
+# When were the data collected in the first wave?
+table(study3data$EndDate)
+begin <- min(study3data$EndDate)
+end <- max(study3data$EndDate)
+
+# And when in the test-retest?
+table(study3data$EndDate_retest)
+beginRetest <- min(study3data$EndDate_retest)
+endRetest <- max(study3data$EndDate_retest)
+
+study3data$retestInterval <- as.numeric(difftime(study3data$EndDate_retest, study3data$EndDate))
+retestIntervalStats <- describe(study3data$retestInterval)
+
+@
+\end{scriptsize}
+
+The first round of data collection for Study 3 ran from \Sexpr{begin} and ended on \Sexpr{end}; the second round (re-test data) were collected a mean of \Sexpr{round(retestIntervalStats$mean,1)} days later (min $=$ \Sexpr{round(retestIntervalStats$min,1)}; max $=$ \Sexpr{round(retestIntervalStats$max,1)}). Of the \Sexpr{NbeforeDrops} participants involved in the first wave, \Sexpr{NbeforeDrops-Nactual} were removed due to low self-reported levels of English language fluency. This left \Sexpr{Nactual} participants at the first wave. From these, \Sexpr{retestIntervalStats$n} participated in the retest assessment roughly two weeks later.
+
+\begin{scriptsize}
+<<Study3.2, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# In this chunk, we score the data.
+# Begin by subsetting the data as needed.
+study3datatrimmed <- subset(study3data, select = c(age, duration, english_native, english, education, income, gender, StartDate, EndDate, EndDate_retest, retestInterval, FFIS_F1:FFIS_D5, CRT_1_scored:CRT_10_scored, q_14003_scored:q_14197_scored, q_14003_retest_scored:q_14197_retest_scored, MultipleChoice_DO_q_14066_retest:MultipleChoice_DO_q_14051_retest))
+
+FFISitems <- study3datatrimmed[,c(findcolnumber(study3datatrimmed, "FFIS_F1"):
+                             findcolnumber(study3datatrimmed, "FFIS_D5"))]
+colnames(FFISitems) <- c("q_5063", "q_5082", "q_5073", "q_5087",
+                         "q_5076", "q_5069", "q_5066", "q_5088",
+                         "q_5092", "q_5086", "q_5074", "q_5081",
+                         "q_5068", "q_5080", "q_5090", "q_5067",
+                         "q_5070", "q_5075", "q_5071", "q_5065",
+                         "q_5083", "q_5062", "q_5085", "q_5089",
+                         "q_5072", "q_5091")
+
+CRTitems <- study3datatrimmed[,c(findcolnumber(study3datatrimmed, "CRT_1_scored"):
+                            findcolnumber(study3datatrimmed, "CRT_10_scored"))]
+
+CRAitemsForIRTwave1 <- study3datatrimmed[,c(findcolnumber(study3datatrimmed, "q_14003_scored"):
+                                       findcolnumber(study3datatrimmed, "q_14197_scored"))]
+
+CRAitemsForIRTwave2 <- study3datatrimmed[,c(findcolnumber(study3datatrimmed, "q_14003_retest_scored"):
+                                       findcolnumber(study3datatrimmed, "q_14197_retest_scored"))]
+
+# Now score by subset
+# Get the sum/mean scores for the FFIS scales and the reliabilities
+makeFFISkeys <- keys.list[c("FFISfrequency", "FFISNegEmoValence", "FFIScomplexity", "FFISdirectedness")]
+FFISkey <- make.keys(FFISitems, makeFFISkeys)
+FFISscored <- scoreItems(FFISkey, FFISitems, totals=FALSE, impute="none", min=1, max=6)
+FFISreliabilities <- FFISscored$alpha
+study3datatrimmed$FFISfrequencyScores <- FFISscored$scores[,"FFISfrequency"]
+study3datatrimmed$FFISNegEmoValenceScores <- FFISscored$scores[,"FFISNegEmoValence"]
+study3datatrimmed$FFIScomplexityScores <- FFISscored$scores[,"FFIScomplexity"]
+study3datatrimmed$FFISdirectednessScores <- FFISscored$scores[,"FFISdirectedness"]
+
+# Get the sum/mean scores for the CRT items and the reliabilities
+key = list(CRT = c("CRT_1_scored", "CRT_2_scored", "CRT_3_scored", "CRT_4_scored",
+                     "CRT_5_scored", "CRT_6_scored", "CRT_7_scored", "CRT_8_scored",
+                     "CRT_9_scored", "CRT_10_scored"))
+CRTkey <- make.keys(CRTitems, key)
+
+CRTscored <- scoreItems(CRTkey, CRTitems, totals=FALSE, impute="none", min=0, max=1)
+CRTreliabilities <- CRTscored$alpha
+study3datatrimmed$CRTscores <- CRTscored$scores[,"CRT"]
+
+itemCounts <- c(length(keys.list$FFISfrequency), length(keys.list$FFISNegEmoValence), length(keys.list$FFIScomplexity), length(keys.list$FFISdirectedness), length(key$CRT))
+
+reliabilitiesdf <- round(data.frame(FFISreliabilities, CRTreliabilities),2)
+reliabilitiesdf <- rbind(reliabilitiesdf, itemCounts)
+colnames(reliabilitiesdf) <- c("FFIS Frequency", "FFIS Emotional Valence", "FFIS Complexity", "FFIS Directedness", "CRT")
+rownames(reliabilitiesdf) <- c("alpha", "items")
+
+
+# Alpha and omega for FFIS scales, CRT, and CRA waves
+omega_FFIS_F <- suppressWarnings(omega(study3datatrimmed[,c(findcolnumber(study3datatrimmed, "FFIS_F1"):
+      findcolnumber(study3datatrimmed, "FFIS_F9"))], plot = F))
+
+omega_FFIS_C <- omega(study3datatrimmed[,c(findcolnumber(study3datatrimmed, "FFIS_C1"):
+      findcolnumber(study3datatrimmed, "FFIS_C5"))], plot = F)
+
+omega_FFIS_EV <- omega(study3datatrimmed[,c(findcolnumber(study3datatrimmed, "FFIS_EV1"):
+      findcolnumber(study3datatrimmed, "FFIS_EV7"))], plot = F)
+
+omega_FFIS_D <- suppressWarnings(omega(study3datatrimmed[,c(findcolnumber(study3datatrimmed, "FFIS_D1"):
+      findcolnumber(study3datatrimmed, "FFIS_D5"))], plot = F))
+
+omega_CRT <- omega(study3datatrimmed[,c(findcolnumber(study3datatrimmed, "CRT_1_scored"):
+      findcolnumber(study3datatrimmed, "CRT_10_scored"))], plot = F)
+
+omega_CRAwave1 <- omega(CRAitemsForIRTwave1, plot = F)
+
+
+omega_FFIS_F$omega.tot
+omega_FFIS_F$alpha
+
+omega_FFIS_C$omega.tot
+omega_FFIS_C$alpha
+
+omega_FFIS_EV$omega.tot
+omega_FFIS_EV$alpha
+
+omega_FFIS_D$omega.tot
+omega_FFIS_D$alpha
+
+omega_CRT$omega.tot
+omega_CRT$alpha
+
+omega_CRAwave1$omega.tot
+omega_CRAwave1$alpha
+
+
+####
+# IRT scores for CRA
+####
+# Align the item labels for wave 1
+names(CRAitemsForIRTwave1) <- substring(names(CRAitemsForIRTwave1), 1, 7)
+
+# Now load the IRT model and IRT score
+load(file = paste(wdpath, "data/study1/IRTmodelCRAnewItems.rdata", sep = ""))
+#load(file = "OnlineSupplement/data/study1/IRTmodelCRAnewItems.rdata")
+
+marginal_rxx(IRT_model_ICAR_CRAnew) # Marginal reliability 
+CRAscoreIRTwave1 = score_ICAR_IRT(dataset = CRAitemsForIRTwave1, IRT_model = IRT_model_ICAR_CRAnew, t_score = TRUE)
+study3datatrimmed$CRAscoreIRTwave1_score <- CRAscoreIRTwave1$ICAR_CRA
+study3datatrimmed$CRAscoreIRTwave1_se <- CRAscoreIRTwave1$SE_ICAR_CRA
+
+# And wave 2
+names(CRAitemsForIRTwave2) <- substring(names(CRAitemsForIRTwave2), 1, 7)
+CRAscoreIRTwave2 = score_ICAR_IRT(dataset = CRAitemsForIRTwave2, IRT_model = IRT_model_ICAR_CRAnew, t_score = TRUE)
+study3datatrimmed$CRAscoreIRTwave2_score <- CRAscoreIRTwave2$ICAR_CRA
+study3datatrimmed$CRAscoreIRTwave2_se <- CRAscoreIRTwave2$SE_ICAR_CRA
+
+descriptives <- suppressWarnings(describe(study3datatrimmed))
+
+# Save objects out for later use
+CRAitemNumbersStudy3 <- colnames(CRAitemsForIRTwave1)
+study3dataCRAonly <- CRAitemsForIRTwave1
+save(study3dataCRAonly, CRAitemNumbersStudy3, file = paste(wdpath, "data/study3/CRAdataStudy3.rdata", sep = ""))
+@
+\end{scriptsize}
+
+\subsection{Descriptive statistics}
+
+The next code chunk describes the sample (N $=$ \Sexpr{as.numeric(describe(study3data$age)["n"])}) and key variables before moving on to the analyses.
+
+\begin{scriptsize}
+<<Study3.3, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+descriptives[c("age", "FFISfrequencyScores", "FFISNegEmoValenceScores", "FFIScomplexityScores", 
+               "FFISdirectednessScores", "CRTscores", "CRAscoreIRTwave1_score", 
+               "CRAscoreIRTwave2_score"),c("n","mean","sd", "median", "min", "max")]
+
+# Note that nearly all participants reported being fluent in English and almost all of these
+# were native English speakers
+table(study3datatrimmed$english_native)
+table(study3datatrimmed$english)
+
+english <- data.frame(table(study3datatrimmed$english)[c(2,1)])
+colnames(english) <- c("English fluency", "Participants")
+english$Percentage <- round(english$Participants/sum(english$Participants)*100,1)
+
+edu <- data.frame(table(study3datatrimmed$education)[c(7,6,3,8,1,2,4,5)])
+colnames(edu) <- c("Educational Attainment Level", "Participants")
+edu$Percentage <- round(edu$Participants/sum(edu$Participants)*100,1)
+
+income <- data.frame(table(study3datatrimmed$income)[c(10,4,7,8,9,1,2,3,5,6,11,12)])
+colnames(income) <- c("Household Income", "Participants")
+income$Percentage <- round(income$Participants/sum(income$Participants)*100,1)
+
+gender <- data.frame(table(study3datatrimmed$gender))
+colnames(gender) <- c("Gender Identity", "Participants")
+gender$Percentage <- round(gender$Participants/sum(gender$Participants)*100,1)
+
+@
+\end{scriptsize}
+
+Descriptive statistics for the scale scores are shown in the code above. Note that the IRT scores for the CRA items (for both wave 1 and the retest values) range are T-scores based on the IRT parameters from Study 1. The scale scores for FFIS are mean scored, based on the items answered; a subset of the sample was not administered the FFIS items due to an complication in the coding of the survey administration (some participants' response sessions timed out before they got to the FFIS section). Internal consistencies for the FFIS scales and the Cognitive Reflection Task, reported in Table \ref{tab:reliabilities}, were all above threshold.
+
+
+\begin{scriptsize} \begin{table}[htp]\caption{Internal consistency reliabilities for Study 3 scales}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Scale  &  alpha & items \cr 
+  \hline 
+FFIS Frequency & \Sexpr{prettyNum(reliabilitiesdf[1,1], big.mark=",", scientific=F)} & \Sexpr{round(reliabilitiesdf[2,1], 0)} \cr
+FFIS Emotional Valence & \Sexpr{prettyNum(reliabilitiesdf[1,2], big.mark=",", scientific=F)} & \Sexpr{round(reliabilitiesdf[2,2], 0)} \cr
+FFIS Complexity & \Sexpr{prettyNum(reliabilitiesdf[1,3], big.mark=",", scientific=F)} & \Sexpr{round(reliabilitiesdf[2,3], 0)} \cr
+FFIS Directedness & \Sexpr{prettyNum(reliabilitiesdf[1,4], big.mark=",", scientific=F)} & \Sexpr{round(reliabilitiesdf[2,4], 0)} \cr
+Cognitive Reflection Task & \Sexpr{prettyNum(reliabilitiesdf[1,5], big.mark=",", scientific=F)} & \Sexpr{round(reliabilitiesdf[2,5], 0)} \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:reliabilities}
+\end{table} 
+\end{scriptsize}
+
+
+Descriptive statistics for the demographic characteristics of the sample are shown below in Tables \ref{tab:englishStudy3} through \ref{tab:genderStudy3}. The sample contains a high majority of participants self-reporting English fluency, and 63.6\% reported having an attained an associate's degree level of education or higher. About 77\% of the sample reported being in a household with income of \$100,000 or less. With respect to gender identity, 2.8\% identified as non-binary, and the remainder of the sample was roughly split between those who endorsed ``female'' (49.6\%) and ``male'' (47.3\%); 1 participant preferred not to respond.
+
+
+\begin{scriptsize} \begin{table}[htp]\caption{English fluency in the Study 3 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline English fluency  &  Participants & Percentage\cr 
+  \hline 
+Well & \Sexpr{prettyNum(english[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(english[1,3], big.mark=",", scientific=F)}\% \cr
+Very well (fluent/native) & \Sexpr{prettyNum(english[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(english[2,3], big.mark=",", scientific=F)}\% \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:englishStudy3}
+\end{table} 
+\end{scriptsize}
+
+
+\begin{scriptsize} \begin{table}[htp]\caption{Educational attainment in the Study 3 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Educational attainment level  &  Participants & Percentage\cr 
+  \hline 
+Less than 12 years  & \Sexpr{prettyNum(edu[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[1,3], big.mark=",", scientific=F)}\% \cr 
+High school graduate/GED  & \Sexpr{prettyNum(edu[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[2,3], big.mark=",", scientific=F)}\% \cr 
+Currently in college/university & \Sexpr{prettyNum(edu[3,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[3,3], big.mark=",", scientific=F)}\% \cr
+Some college/university, but did not graduate & \Sexpr{prettyNum(edu[4,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[4,3], big.mark=",", scientific=F)}\% \cr
+Associate degree & \Sexpr{prettyNum(edu[5,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[5,3], big.mark=",", scientific=F)}\% \cr
+College/university degree & \Sexpr{prettyNum(edu[6,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[6,3], big.mark=",", scientific=F)}\% \cr
+Currently in graduate or professional school & \Sexpr{prettyNum(edu[7,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[7,3], big.mark=",", scientific=F)}\% \cr
+Graduate or professional school degree & \Sexpr{prettyNum(edu[8,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(edu[8,3], big.mark=",", scientific=F)}\% \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:eduStudy3}
+\end{table} 
+\end{scriptsize}
+
+\begin{scriptsize} \begin{table}[htp]\caption{Household income in the Study 3 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Household income (annual) &  Participants & Percentage\cr 
+  \hline 
+Less than 20,000 & \Sexpr{prettyNum(income[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[1,3], big.mark=",", scientific=F)}\% \cr 
+20,000 to 40,000 & \Sexpr{prettyNum(income[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[2,3], big.mark=",", scientific=F)}\% \cr
+40,000 to 60,000 & \Sexpr{prettyNum(income[3,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[3,3], big.mark=",", scientific=F)}\% \cr
+60,000 to 80,000 & \Sexpr{prettyNum(income[4,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[4,3], big.mark=",", scientific=F)}\% \cr
+80,000 to 100,000 & \Sexpr{prettyNum(income[5,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[5,3], big.mark=",", scientific=F)}\% \cr
+100,000 to 120,000 & \Sexpr{prettyNum(income[6,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[6,3], big.mark=",", scientific=F)}\% \cr
+120,000 to 150,000 & \Sexpr{prettyNum(income[7,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[7,3], big.mark=",", scientific=F)}\% \cr
+150,000 to 200,000 & \Sexpr{prettyNum(income[8,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[8,3], big.mark=",", scientific=F)}\% \cr
+200,000 to 250,000 & \Sexpr{prettyNum(income[9,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[9,3], big.mark=",", scientific=F)}\% \cr
+250,000 to 350,000 & 0 & 0\% \cr
+350,000 to 500,000 & \Sexpr{prettyNum(income[10,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[10,3], big.mark=",", scientific=F)}\% \cr
+More than 500,000 & \Sexpr{prettyNum(income[11,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[11,3], big.mark=",", scientific=F)}\% \cr
+Prefer not to say & \Sexpr{prettyNum(income[12,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(income[12,3], big.mark=",", scientific=F)}\% \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:incomeStudy3}
+\end{table} 
+\end{scriptsize}
+
+\begin{scriptsize} \begin{table}[htp]\caption{Gender identity in the Study 3 sample}
+\begin{center}
+\begin{tabular} {l r r r}
+ \hline Gender identity &  Participants & Percentage\cr 
+  \hline 
+Female & \Sexpr{prettyNum(gender[1,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[1,3], big.mark=",", scientific=F)}\% \cr 
+Male & \Sexpr{prettyNum(gender[2,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[2,3], big.mark=",", scientific=F)}\% \cr
+Non-binary & \Sexpr{prettyNum(gender[3,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[3,3], big.mark=",", scientific=F)}\% \cr
+Prefer not to say & \Sexpr{prettyNum(gender[4,2], big.mark=",", scientific=F)} & \Sexpr{prettyNum(gender[4,3], big.mark=",", scientific=F)}\% \cr
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:genderStudy3}
+\end{table} 
+\end{scriptsize}
+
+\subsection{Validity and two-week test-retest analyses}
+
+Correlations among the key variables/scale scores are shown in the code below.
+\begin{scriptsize}
+<<Study3.4, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+scoresSubsetStudy3 <- subset(study3datatrimmed, select = c(CRAscoreIRTwave1_score, CRAscoreIRTwave2_score, 
+                                                           CRTscores, FFISfrequencyScores, FFISNegEmoValenceScores, 
+                                                           FFIScomplexityScores, FFISdirectednessScores))
+scoresCorStudy3 <- cor.ci(scoresSubsetStudy3, plot = FALSE)
+scoresCorStudy3
+@
+\end{scriptsize}
+
+Note that the correlations above include the two-week test-retest correlation (\textit{r} $=$ \Sexpr{round(scoresCorStudy3$rho["CRAscoreIRTwave1_score", "CRAscoreIRTwave2_score"],2)}; 95\% empirical CI: [\Sexpr{round(scoresCorStudy3$ci$low.e[1],2)},\Sexpr{round(scoresCorStudy3$ci$up.e[1],2)}]). This association is also shown in Figure \ref{fig:retestCors}.
+
+\begin{scriptsize}
+<<Study3.5a, eval=TRUE, echo=FALSE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+CorPlot <- scoresSubsetStudy3 %>%
+  dplyr::filter(!is.na(CRAscoreIRTwave2_score)) %>% 
+  ggplot(aes(x = CRAscoreIRTwave1_score, y = CRAscoreIRTwave2_score)) +
+  geom_point(color = "dodgerblue4") +
+  geom_smooth(method = "lm", formula = y ~ x) +
+  labs(x = "Time 1", y = "Time 2", title = "") +
+  theme_bw() +
+  ggpubr::stat_cor(method = "pearson", p.accuracy = 0.001)
+ggsave(filename = paste(wdpath, "figure/retestCors.png", sep=""), scale = 1, width = 5, height = 6, units = c("in"), dpi = 300)
+
+
+#### Item-level test retest ####
+
+# Creating a new participant variable (Prolific IDs were removed to preserve anonymity)
+study3data_retest <- study3data %>%
+  dplyr::mutate(participant=rownames(.)) %>%
+  relocate(participant)
+
+# Now, because the items were randomly administered, we need to get nested data frames (within participants) to match the "seen_before" questions to the correct CRA item
+
+# Getting data frame with the viewing order for session 1 items 
+Viewing_Orders <- study3data_retest %>%
+  dplyr::select(participant, contains("MultipleChoice_DO"), -contains("retest")) %>%
+  pivot_longer(cols = MultipleChoice_DO_q_14006:MultipleChoice_DO_q_14051,
+  names_to = "CRA_Question",
+  values_to = "Viewing_Order") %>%
+  nest(data = -participant) %>%
+  dplyr::mutate(Filtered_Viewing = map(data,
+  ~dplyr::filter(., !is.na(Viewing_Order)) %>%
+  dplyr::mutate(Viewing_Order =
+  as.numeric(Viewing_Order)) %>%
+  arrange(Viewing_Order) %>%
+  dplyr::mutate(CRA_Question =
+  gsub("MultipleChoice_DO_", "", CRA_Question)))) %>%
+  dplyr::select(-data)
+
+# Separating out session 2 data
+Session_2 <- study3data_retest %>%
+  dplyr::select(participant, contains("retest_scored"), contains("Seen_Before"))
+
+# Session 2 CRA items and responses
+Session_2_Questions <- Session_2 %>%
+  dplyr::select(-contains("Seen")) %>%
+  pivot_longer(cols = contains("retest_scored"),
+  names_to = "CRA_Question",
+  values_to = "Session_2_Response") %>%
+  nest(data = -participant) %>%
+  dplyr::mutate(Filtered_Session2_Questions = map(data,
+  ~dplyr::filter(., !is.na(Session_2_Response)) %>%
+  dplyr::mutate(CRA_Question =
+  gsub("_retest_scored", "", CRA_Question)))) %>%
+  dplyr::select(-data)
+
+# Session 2 "seen before" questions
+Seen_Before <- Session_2 %>%
+  dplyr::select(participant,
+  contains("Seen")) %>%
+  pivot_longer(cols = contains("Seen"),
+  names_to = "Seen_Question",
+  values_to = "Seen_Claimed") %>%
+  nest(data = -participant) %>%
+  dplyr::mutate(Filtered_Seen_Questions = map(data,
+  ~dplyr::mutate(., Seen_Question =
+  gsub(".x", "", Seen_Question)))) %>%
+  dplyr::select(-data) %>%
+  dplyr::mutate(Filtered_Seen_Questions = map(Filtered_Seen_Questions,
+  ~dplyr::mutate(., Viewing_Order =
+  as.numeric(str_extract(Seen_Question, "(\\d)+"))))) %>%
+  dplyr::mutate(Filtered_Seen_Questions = map(Filtered_Seen_Questions,
+  ~dplyr::mutate(., Viewing_Order = Viewing_Order*2-1))) %>%
+  dplyr::mutate(Filtered_Seen_Questions = map(Filtered_Seen_Questions,
+  ~dplyr::mutate(., Seen_Claimed = factor(dplyr::case_when(
+  Seen_Claimed == "No" ~ 0, Seen_Claimed == "Yes" ~ 1), levels = c(0,1), labels = c("No", "Yes")))))
+
+# Session 1 responses to CRA items
+Session_1 <- study3data_retest %>%
+  dplyr::select(participant,
+  contains("_scored"), -contains("retest"), -contains("CRT")) %>%
+  pivot_longer(cols = contains("scored"),
+  names_to = "CRA_Question",
+  values_to = "Session_1_Response") %>%
+  nest(data = -participant) %>%
+  dplyr::mutate(Filtered_Session_1 = map(data,
+  ~dplyr::mutate(., CRA_Question =
+  gsub("_scored", "", CRA_Question)))) %>%
+  dplyr::select(-data)
+
+
+# Merging the data frames
+Full_Nested <- inner_join(Session_1, Session_2_Questions, by = "participant")
+Full_Nested <- inner_join(Full_Nested, Seen_Before, by = "participant")
+Full_Nested <- inner_join(Full_Nested, Viewing_Orders, by = "participant")
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study3.5b, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# This section of code is hide from the PDF because the results cannot be (readily) compiled without LateX issues.
+
+# Joining nested data frames 
+Full_Nested <- Full_Nested %>%
+  dplyr::mutate(data = map2(Filtered_Viewing,
+                     Filtered_Session_1,
+                     inner_join))
+
+Full_Nested <- Full_Nested %>%
+  dplyr::mutate(data = map2(data,
+                     Filtered_Session2_Questions,
+                     inner_join))
+
+Full_Nested <- Full_Nested %>%
+  dplyr::mutate(data = map2(data,
+                     Filtered_Seen_Questions,
+                     inner_join))
+
+Full_Nested <- Full_Nested %>%
+  dplyr::mutate(data = map(data,
+                    ~mutate(., Actually_Seen = ifelse(!is.na(Session_1_Response), 1, 0)
+                    )))
+
+
+# Unnesting the data
+Unnested <- Full_Nested %>%
+  dplyr::select(participant, data) %>%
+  unnest(cols = c(data))
+
+Unnested <- Unnested %>%
+  dplyr::mutate(Seen_num = ifelse(Seen_Claimed == "Yes", 1, 0))
+
+
+# Running the model with session 1 response and seen before as predictors
+Unnested$Session_1_Response <- factor(Unnested$Session_1_Response, labels = c("Incorrect", "Correct"))
+
+
+trt_model <- glmer(Session_2_Response ~ Session_1_Response + Seen_Claimed + (1 | participant), data = Unnested, family = "binomial")
+summary(trt_model)
+
+##### Adding interaction effect ######
+
+trt_model1 <- glmer(Session_2_Response ~ Session_1_Response*Seen_Claimed + (1 | participant), data = Unnested, family = "binomial")
+summary(trt_model1)
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study3.5c, eval=TRUE, echo=FALSE, results='asis', tidy=FALSE, message=FALSE, warning=FALSE>>=
+se_trt_model <- sqrt(diag(vcov(trt_model)))
+tab_main <- cbind(Est = lme4::fixef(trt_model), 
+                  lowerCI = lme4::fixef(trt_model) - 1.96 * se_trt_model, 
+                  upperCI = lme4::fixef(trt_model) + 1.96 * se_trt_model)
+tab_main <- as.data.frame(tab_main)
+tab_main$OR <- exp(tab_main$Est)
+tab_main$OR_lowerCI <- exp(tab_main$lowerCI)
+tab_main$OR_upperCI <- exp(tab_main$upperCI)
+
+colnames(tab_main) <- c("Estimate", "CI lower", "CI upper", "Odds Ratio", "Odds ratio upper", "Odds ratio lower")
+rownames(tab_main) <- c("Intercept", "Response time 1 (Incorrect v Correct)", "Remembered item (No v Yes)")
+
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(tab_main))
+comment$command <- c(paste("\\hline\n",
+                          "\\multicolumn{5}{l}{Notes: The estimate values (cols 1-3) are the logistic regression coefficients. CI lower}\\\\\n",
+                          "\\multicolumn{5}{l}{and upper represent the bounds of the 95 confidence interval.}\\\\\n",
+                          "\\multicolumn{5}{l}{Reference group is an incorrect response to an item that was not remembered.}\\\\\n", sep = ""))
+
+tab_main <- xtable(tab_main, digits=0, caption='Model summary testing the main effects', label='tab:model_trt')
+align(tab_main) <- "lcccccc"
+digits(tab_main) <- c(0,2,2,2,2,2,2)
+print(tab_main, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+
+
+##### Adding interaction effect ######
+
+
+se_trt_model1 <- sqrt(diag(vcov(trt_model1)))
+tab_main1 <- cbind(Est = lme4::fixef(trt_model1), 
+                  lowerCI = lme4::fixef(trt_model1) - 1.96 * se_trt_model1, 
+                  upperCI = lme4::fixef(trt_model1) + 1.96 * se_trt_model1)
+tab_main1 <- as.data.frame(tab_main1)
+tab_main1$OR <- exp(tab_main1$Est)
+tab_main1$OR_lowerCI <- exp(tab_main1$lowerCI)
+tab_main1$OR_upperCI <- exp(tab_main1$upperCI)
+
+
+colnames(tab_main1) <- c("Estimate", "CI lower", "CI upper", "Odds Ratio", "Odds ratio upper", "Odds ratio lower")
+rownames(tab_main1) <- c("Intercept", "Response time 1 (Incorrect v Correct)", "Remembered item (No v Yes)", "Interaction effect")
+
+comment <- list(pos = list(0), command = NULL)
+comment$pos[[1]] <- c(nrow(tab_main1))
+comment$command <- c(paste("\\hline\n",
+                          "\\multicolumn{5}{l}{Notes: The estimate values (cols 1-3) are the logistic regression coefficients. CI lower}\\\\\n",
+                          "\\multicolumn{5}{l}{and upper represent the bounds of the 95 confidence interval.}\\\\\n",
+                          "\\multicolumn{5}{l}{Reference group is an incorrect response to an item that was not remembered.}\\\\\n", sep = ""))
+
+tab_main1 <- xtable(tab_main1, digits=0, caption='Model summary testing the main effects and interaction effect', label='tab:model_trt1')
+align(tab_main1) <- "lcccccc"
+digits(tab_main1) <- c(0,2,2,2,2,2,2)
+print(tab_main1, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study3.5d, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# Comparing models
+anova(trt_model, trt_model1)
+@
+\end{scriptsize}
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.65\textwidth]{figure/retestCors.png}}{\caption{Test-retest reliability over two weeks}\label{fig:retestCors}}
+\end{figure}
+
+
+\section{Study 4}
+
+\subsection{Dimensionality and IRT analyses of the combined CRA item sets}
+
+The aim of Study 4 is to identify the IRT calibrations of a larger item set for use when administering the CRA with multiple choice response options in the future. The method matches the same procedures used in Study 1, however the item pool is expanded. Here, we generate calibrations for a set that combines the ``new'' CRA items and the multiple-choice version of the CRAT items from Study 1 (87 in total, after removing the problematic items), plus multiple-choice versions of an additional 80 items commonly used as open-ended items in CRA-related research (based on personal correspondence with Mark Beeman). Thus, \textbf{there are a total of 167 items in the combined CRA item pool reported on here}.
+
+Of the 80 new items that we not previously used in Studies 1 or 2, 49 are part of the 144-item set described in \citet{Bowden:2003CRAT} (these items are numbered q\textunderscore 14327 through q\textunderscore 14404, with many of the chronological item numbers excluded), and the remaining 31 items were algorithmically generated using the procedures described in Study 1. These 31 items have not previously been published, and are numbered q\textunderscore 14434 through q\textunderscore 14466. Note that items q\textunderscore 14442 and q\textunderscore 14437 were deprecated due to having an aberrantly low difficulty and discrimination values, respectively.
+
+In the code version of this file (see the .Rnw), we begin by wrangling the data as follows: (1) loading this larger data file that overlaps with the one used in Study 1, (2) removing the items identified as problematic in Study 1 (2 items from the new 67-item set of the CRA and 8 from the older 30-item CRAT set), (3) removing the two items mentioned above, and (4) generating descriptive statistics.
+
+\begin{scriptsize}
+<<Study4.1, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+rm(list=ls()[!(ls() %in% c('findcolnumber', 'keys.list', 'wdpath', 'score_ICAR_IRT', 'CRAitemNumbersStudy1'))])
+load(paste(wdpath, "data/study1/CRAdataStudy1version1.rdata", sep = ""))
+#load("OnlineSupplement/data/study1/CRAdataStudy1version1.rdata")
+
+endDate <- substr(max(CRAitemData$servertime), 1, 10)
+midDate <- "2022-06-25"
+lengthDays <- difftime(endDate, midDate, units = "days")
+
+CRAitemSetAll <- subset(CRAitemData, select = c(q_14003:q_14466))
+dim(CRAitemSetAll)
+
+# Recall that two items were dropped from the new CRA item set...
+CRAitemSetAll <- subset(CRAitemSetAll, select = -c(q_14043, q_14023))
+dim(CRAitemSetAll)
+
+# And several others were dropped from the CRAT item set...
+CRAitemSetAll <- subset(CRAitemSetAll, select = -c(q_14317, q_14307, q_14318, q_14310, q_14308, q_14315, q_14298, q_14299))
+dim(CRAitemSetAll)
+
+# And three more were dropped due to having aberrantly low diff (14442) or disc (14437, 14364).
+CRAitemSetAll <- subset(CRAitemSetAll, select = -c(q_14442, q_14437, q_14364))
+dim(CRAitemSetAll)
+
+CRAitemSet167 <- CRAitemSetAll
+rm(CRAitemSetAll, CRAitemData)
+gc()
+
+descCRAitems167 <- psych::describe(CRAitemSet167)
+totalSampleSize <- describe(descCRAitems167$n)
+
+CRAitemNumbers167 <- colnames(CRAitemSet167)
+CRAitemContent167 <- CRAitemContent[CRAitemNumbers167,]
+rm(CRAitemContent)
+gc()
+
+descCRAitemssorted167 <- descCRAitems167[with(descCRAitems167, order(-mean)),]
+
+pwiseAdminsCRAitems167 <- pairwiseCount(CRAitemSet167, diagonal = TRUE)
+pwiseAdminsCRAitems167Vec <- as.vector(pwiseAdminsCRAitems167[lower.tri(pwiseAdminsCRAitems167)])
+pwiseAdminsCRAitems167Describe <- psych::describe(pwiseAdminsCRAitems167Vec)
+n_obs167 <- pwiseAdminsCRAitems167Describe$mean
+
+# Get the descriptive statistics for the pairwise administration counts
+pwiseAdminsCRAitems167Describe
+
+@
+\end{scriptsize}
+
+The resulting data frame includes \Sexpr{dim(CRAitemSet167)[2]} CRA items and \Sexpr{prettyNum(dim(CRAitemSet167)[1], big.mark=",", scientific=F)} participants. With respect to the overlapping nature of these data relative to Study 1, note that the Study 1 data were collected between 2017-02-07 and 2022-06-25. Here, we have added to those data by administering items more intensively from the larger item pool. Thus the data collection in this sample ran from 2017-02-07 to \Sexpr{endDate}. Over much of this interval, a small number of items were given from about half of the item pool (i.e., the data from Study 1), but a larger number of items were given from a larger item pool over the last \Sexpr{round(as.numeric(lengthDays),0)} days. We use all available data to maximize our sample size --- this is particularly important when identifying the IRT parameters.
+
+The total number of administrations per item ranged from \Sexpr{prettyNum(totalSampleSize$min, big.mark=",", scientific=F)} to \Sexpr{prettyNum(totalSampleSize$max, big.mark=",", scientific=F)} (\textit{m} = \Sexpr{prettyNum(round(totalSampleSize$mean,1), big.mark=",", scientific=F)}; \textit{Mdn} = \Sexpr{prettyNum(totalSampleSize$median, big.mark=",", scientific=F)}; \textit{sd} = \Sexpr{prettyNum(round(totalSampleSize$sd,1), big.mark=",", scientific=F)}). The pairwise administration counts ranged from \Sexpr{prettyNum(pwiseAdminsCRAitems167Describe$min, big.mark=",", scientific=F)} to \Sexpr{prettyNum(pwiseAdminsCRAitems167Describe$max, big.mark=",", scientific=F)} (\textit{m} = \Sexpr{prettyNum(round(pwiseAdminsCRAitems167Describe$mean,1), big.mark=",", scientific=F)}; \textit{Mdn} = \Sexpr{prettyNum(pwiseAdminsCRAitems167Describe$median, big.mark=",", scientific=F)}; \textit{sd} = \Sexpr{prettyNum(round(pwiseAdminsCRAitems167Describe$sd,1), big.mark=",", scientific=F)}). In the next chunk, we identify the item-level correlation matrix (tetrachoric) and evaluate the unidimensionality.
+
+\begin{scriptsize}
+<<Study4.2, eval=TRUE, echo=TRUE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+tetchor_matrix167 <- suppressWarnings(tetrachoric(CRAitemSet167, smooth = TRUE))
+
+cor_matrix167 <- tetchor_matrix167$rho
+
+omega_results167 <- suppressWarnings(psych::omega(cor_matrix167, plot = FALSE))
+omega.h167 <- round(omega_results167$omega_h,2)
+omega.alpha167 <- round(omega_results167$alpha,2)
+omega.t167 <- round(omega_results167$omega.tot,2)
+@
+\end{scriptsize}
+
+The items have high internal consistency in this data set ($\alpha$ = \Sexpr{omega.alpha167}; $\omega_{t}$ = \Sexpr{omega.t167}). Similarly, the omega general value ($\omega_{h}$ = \Sexpr{omega.h167}) suggests strong unidimensionality. To help visualize this, we plot the correlations among items after they have been sorted by factor loading (code not shown), with a one factor model specified (sorting by factor loading is only done to organize the presentation of items). We also extract the empirically-observed confidence intervals around the tetrachoric correlations here (also not shown; see the Rnw version). 
+
+\begin{scriptsize}
+<<Study4.3, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+CRA_fa167 <- suppressMessages(suppressWarnings(fa(cor_matrix167, nfactors = 1)))
+CRA_fa_sort167 <- fa.sort(CRA_fa167)
+rows_CRA167 <- rownames(CRA_fa_sort167$loadings)
+
+cor_matrix167_plot <- cor_matrix167[rows_CRA167, rows_CRA167]
+
+avg_cor_value167 <- mean(cor_matrix167)
+min_cor_value167 <- min(cor_matrix167)
+
+CIs167 <- corCi(cor_matrix167, n.iter=1000, n=n_obs167)
+CIs167 <- as.data.frame(CIs167$r.ci)
+CIs167$range <- CIs167$upper-CIs167$lower
+CIs167$sig <- ifelse(CIs167$range > CIs167$upper, 0, 1)
+CIs167$sigNeg <- ifelse(CIs167$upper < 0, 1, 0)
+
+maxCI167 <- max(CIs167$range)
+minCI167 <- min(CIs167$range)
+meanCI167 <- mean(CIs167$range)
+overlappingZero167 <- nrow(CIs167)-sum(CIs167$sig)
+sigNeg167 <- sum(CIs167$sigNeg)
+
+# get the IRT model of the response data
+IRT_model167 <- suppressWarnings(mirt(CRAitemSet167, 1, itemtype = "2PL", constrain = NULL, technical = list(NCYCLES=2000)))
+
+
+#M2(IRT_model167, na.rm = TRUE)
+
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study4.4, eval=TRUE, echo=FALSE, results='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+file_path = paste(wdpath, "figure/singlefactorcors167.png", sep = "")
+png(height=1800, width=1800, file=file_path, type = "cairo")
+corrplot(cor_matrix167_plot, method = "color", tl.col = "black",
+         bg = "White", tl.srt = 0, type = "full", title = "",
+         col = COL2('RdBu',200), tl.pos = 'n')
+dev.off()
+
+file_path= paste(wdpath, "figure/singlefactorcors167.eps", sep="")
+setEPS()
+postscript(height=200, width=200, file=file_path)
+corrplot(cor_matrix167_plot, method = "color", tl.col = "black",
+         bg = "White", tl.srt = 0, type = "full", title = "",
+         col = COL2('RdBu',200), tl.pos = 'n')
+dev.off()
+
+@
+\end{scriptsize}
+
+The correlations are shown in Figure \ref{fig:singlefactorcors167}. The plot provides evidence of a clear general factor, though there are a small number of correlations between items with point estimates below 0 --- as low as \Sexpr{round(min_cor_value167,3)} --- indicated with pale red tones in the lower right corner of the figure (average overall \textit{r} = \Sexpr{round(avg_cor_value167,2)}). The range of the 95\% confidence intervals around these correlations (i.e., the range from the high to low end of the confidence interval) had a mean of \Sexpr{round(meanCI167,2)} (minimum $=$ \Sexpr{round(minCI167,2)} and maximum = \Sexpr{round(maxCI167,2)}). Of the \Sexpr{prettyNum(((167*167-167)/2), big.mark=",", scientific=F)} pairwise correlations, \Sexpr{overlappingZero167} had confidence intervals overlapping with zero; only \Sexpr{sigNeg167} of the remaining \Sexpr{prettyNum(((167*167-167)/2)-overlappingZero167, big.mark=",", scientific=F)} had point estimates \textit{and} confidence intervals below 0.
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.75\textwidth]{figure/singlefactorcors167.png}}{\caption{Correlations among 167 multiple choice CRA items sorted by general factor loadings.}\label{fig:singlefactorcors167}}
+\end{figure}
+
+\subsection{Identify the IRT parameters for the full CRA item bank}
+
+The next step is to extract and table the IRT parameters for the full item bank, then plot the item characteristic curves (for all items separately and together) and test information functions. The code for these steps is left out of the PDF version of this file (see the Rnw for full details). Table \ref{tab:parameters167} shows the items and parameters. This includes coefficients for the item difficulties (the location of the 50/50 probability of a correct response) and discrimination parameters (the slopes), as well as the mean proportion of correct responses and the standard error of the means.
+
+\begin{scriptsize}
+<<Study4.5, eval=TRUE, echo=FALSE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+# table the item parameters
+# note that you must specify IRTpars=TRUE to get difficulties instead of easiness
+IRT_model_parameters167 <- coef(IRT_model167, IRTpars=TRUE, simplify = TRUE)
+marginalReliability167 <- marginal_rxx(IRT_model167)
+marginalReliability167
+
+CRAparameters167 <- IRT_model_parameters167$items[,1:2]
+CRAparameters167 <- data.frame(CRAparameters167, descCRAitemssorted167$mean, descCRAitemssorted167$se, descCRAitemssorted167$n)
+colnames(CRAparameters167) <- c("discrimination", "difficulty", "mean", "se", "n")
+
+CRA167parametersSortedByDisc <- CRAparameters167[order(CRAparameters167[,"discrimination"]),]
+CRA167parametersSortedByDiff <- CRAparameters167[order(CRAparameters167[,"difficulty"]),]
+CRA167parametersSortedByMean <- CRAparameters167[order(CRAparameters167[,"mean"]),]
+lowDisc <- subset(CRA167parametersSortedByDisc, CRA167parametersSortedByDisc$discrimination<.6)
+
+# make table of item content and parameters
+CRAitemContent167v2 <- CRAitemContent167[rownames(CRAparameters167),c("prompt1", "prompt2", "prompt3", "stem")]
+colnames(CRAitemContent167v2) <- c("Stimuli 1", "Stimuli 2", "Stimuli 3", "Solution")
+CRAparameters167v2 <- cbind(CRAitemContent167v2, CRAparameters167)
+
+
+# IRT model fit
+# model_fit167 <- M2(IRT_model167, na.rm = TRUE)
+
+
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study4.6, eval=TRUE, echo=FALSE, results='hide', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>=
+# plot the item characteristic curves for all items separately and together
+
+file_path = paste(wdpath, "figure/ICCs167.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model167, type = 'trace', facet_items = TRUE)
+dev.off()
+
+file_path= paste(wdpath, "figure/ICCs167.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model167, type = 'trace', facet_items = TRUE)
+dev.off()
+
+file_path = paste(wdpath, "figure/ICCscombined167.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model167, type = 'trace', facet_items = FALSE, auto.key = FALSE)
+dev.off()
+
+file_path= paste(wdpath, "figure/ICCscombined167.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model167, type = 'trace', facet_items = TRUE)
+dev.off()
+
+# plot the test information function with the standard error
+
+file_path = paste(wdpath, "figure/irttestfunction167.png", sep = "")
+png(height=600, width=600, file=file_path, type = "cairo")
+plot(IRT_model167, type = "infoSE", xlim = c(-3,3)) #test score function
+dev.off()
+
+file_path= paste(wdpath, "figure/irttestfunction167.eps", sep="")
+setEPS()
+postscript(height=100, width=100, file=file_path)
+plot(IRT_model167, type = "infoSE", xlim = c(-3,3)) #test score function
+dev.off()
+
+file_path = paste(wdpath, "figure/IRTtwofiguresFullBank.png", sep = "")
+png(height=600, width=1200, file=file_path, type = "cairo")
+plot3 <- plot(IRT_model167, type = "infoSE", xlim = c(-3,3)) #test score function
+plot4 <- plot(IRT_model167, type = 'trace', facet_items = FALSE, auto.key = FALSE)
+grid.arrange(plot3, plot4, ncol=2)
+dev.off()
+
+@
+\end{scriptsize}
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.75\textwidth]{figure/ICCscombined167.png}}{\caption{Item probability functions for all of the CRA items together.}\label{fig:ICCscombined167}}
+\end{figure}
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.95\textwidth]{figure/ICCs167.png}}{\caption{Item probability functions for all of the CRA items.}\label{fig:ICCs167}}
+\end{figure}
+
+Figure \ref{fig:ICCscombined167} shows the probability functions for all the items together in one plot, and Figure \ref{fig:ICCs167} shows the probability functions for all 167 items separately. Figure \ref{fig:ICCscombined167} indicates that most items have difficulties greater than zero (\textit{m} = \Sexpr{round(mean(CRA167parametersSortedByDisc[,"difficulty"]),2)}; \textit{Mdn} = \Sexpr{round(median(CRA167parametersSortedByDisc[,"difficulty"]),2)}). Difficulty values reflect the location of the intercept where the probabilities of correct and incorrect responses are equal. Only \Sexpr{length(CRA167parametersSortedByDiff$difficulty[CRA167parametersSortedByDiff$difficulty<0])} of the 167 items have difficulty coefficients below zero, and this indicates that most items are somewhat difficult for most respondents. Given the content of these items, moderately high difficulties are desirable, but items with excessively high difficulty would not be particularly useful as there will be little variance across respondents (i.e., because nearly all respondents fail to identify the correct answer).
+
+Figures \ref{fig:ICCscombined167} and \ref{fig:ICCs167} also show that most of the items are adequately discriminant (\textit{m} = \Sexpr{round(mean(CRA167parametersSortedByDisc[,"discrimination"]),2)}; \textit{Mdn} = \Sexpr{round(median(CRA167parametersSortedByDisc[,"discrimination"]),2)}), though there are a few exceptions. This implies that the items are able to discriminate well between individuals with relatively similar levels of associative ability around the difficulty intercept, as a small increase in associative ability in this range substantially increases the probability of correct responding. This is depicted visually by the slope of the item probability functions. Of the 167 items, only \Sexpr{length(CRA167parametersSortedByDisc$discrimination[CRA167parametersSortedByDisc$discrimination<.6])} have discrimination parameters below .6 and above .5, a value that is commonly deemed a lower bound of acceptability \citep{An:2014, Debeer:2013}. Note that it may also be reasonable to drop a few other items with relatively low discriminations, but there is a case to be made for keeping items that cover a wide range of discriminations, especially if they are all above an acceptable threshold \citep{Cheng:2015}. This argument mainly rests on the increased flexibility provided by a diverse item set for computer adaptive testing applications.
+
+Figure \ref{fig:irttestfunction167} shows the joint information for the final set of CRA items across the range of difficulty along with the standard error. As the standard error is akin to the inverse of reliability (more specifically, reliability is 1 minus the square of the standard error over the standard deviation), Figure \ref{fig:irttestfunction167} indicates that the test is particularly reliable from the range of difficulty of about -0.5 sd to +3 sd. The marginal reliability across all respondents in these data is high at \Sexpr{round(marginalReliability167,2)} \citep{Thissen:2001}.
+
+The parameters for the (2PL) IRT model for the full item bank --- shown in Table \ref{tab:parameters167} --- are posted for use by others OSF with the rest of the materials for this project; see \href{tinyurl.com/2a8vx6n8}{tinyurl.com/2a8vx6n8}.
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.75\textwidth]{figure/irttestfunction167.png}}{\caption{Test information (blue) and standard error (red) functions for the complete CRA item pool.}\label{fig:irttestfunction167}}
+\end{figure}
+
+\clearpage
+
+\begin{scriptsize}
+<<Study4.7, eval=TRUE, echo=FALSE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+# Note that we are purposefully omitting the stimuli and solutions for the items in this table
+# This is done to preserve the validity of the items for future administrations
+
+# This is broken into a separate chunk because it only prints the long table...
+addtorow <- list(pos = list(0), command = NULL)
+command <- paste0("Item & Discrimination & Difficulty & Mean & SE & N \\\\\n",
+                  "\\hline\n",
+                  "\\endhead\n",
+                  "\\hline\n",
+                  "\\multicolumn{6}{c}{\\textit{(continued on next page)}}\n",
+                  "\\endfoot\n",
+                  "\\multicolumn{6}{l}{Notes: The values for mean, se (standard error of the}\\\\\n",
+                  "\\multicolumn{6}{l}{mean), and n are based on individual administrations;}\\\\\n",
+                  "\\multicolumn{6}{l}{the discrimination and difficulty values are based on}\\\\\n",
+                  "\\multicolumn{6}{l}{a 2PL item response model.}\\\\\n",
+                  "\\hline\n",
+                  "\\endlastfoot\n")
+addtorow$command <- command
+
+CRAparameters167Table <- xtable(CRAparameters167, digits=0, caption='Item parameters for complete CRA item pool', label='tab:parameters167')
+align(CRAparameters167Table) <- "lrrrrr"
+digits(CRAparameters167Table) <- c(0,2,2,2,3,0)
+print(CRAparameters167Table, tabular.environment = "longtable", include.colnames = FALSE, caption.placement = "top", add.to.row = addtorow, size='scriptsize', floating = FALSE)
+
+# delete these lines when the table is working properly...
+#print(CRATparameterstrimmedTable, add.to.row = comment, hline.after = c(-1,0,NULL), size='scriptsize', floating = TRUE)
+
+#print(xtable(CRAparameters167, caption = "Item parameters for complete CRA item pool", label='tab:parameters167', align = c("lccccc")), digits = c(0,2,2,2,3,0), size='scriptsize', caption.placement = "top", tabular.environment = "longtable", include.colnames = FALSE, floating = FALSE, add.to.row = addtorow)
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study4.8, eval=TRUE, echo=FALSE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+CRAitemNumbersFullBank <- colnames(CRAitemSet167)
+IRT_model_ICAR_CRA <- IRT_model167
+save(IRT_model_ICAR_CRA, CRAitemNumbersFullBank, score_ICAR_IRT, file = paste(wdpath, "data/study4/IRTmodelCRAitemsFullBank.rdata", sep = ""))
+@
+\end{scriptsize}
+
+\subsection{A mini-tutorial based on the IRT parameters for the full CRA item bank}
+
+In the final sub-section, we use the IRT parameters identified in the prior section to re-visit the data sets in Studies 2 and 3. This is done for two reasons: (1) to show how the parameters can be used to produce generalizable scale scores that allow for the comparison of scores across samples, and (2) to compare the samples used in the current work. Recall that the data in Study 1 are highly overlapping with the data used to derive the IRT parameters; Studies 2 and 3 are `out-of-sample' in this case.
+
+The procedures are relatively straight-forward. We need (a) the scoring function, (b) the scoring parameters, and (c) the data to be scored. We have been using the IRT scoring function throughout this project --- it was actually included in the very first code chunk, visible in the .Rnw version of the file. For transparency, we print the code of that function here for reference; it is essentially a wrapper around the \texttt{fscores()} function in the mirt package \citep{Chalmers:2012ut}.
+
+\begin{scriptsize}
+<<Study4.9, eval=TRUE, echo=TRUE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+rm(list=ls()[!(ls() %in% c('findcolnumber', 'keys.list', 'wdpath', 'score_ICAR_IRT'))])
+
+score_ICAR_IRT
+@
+\end{scriptsize}
+
+The scoring parameters were identified in the previous subsection. As previously stated, the model can be downloaded directly from the OSF page (\href{tinyurl.com/2a8vx6n8}{tinyurl.com/2a8vx6n8}); look for the file named `IRTmodelCRAitemsFullBank.rdata'. In the next code chunk, we show it being loaded (after being downloaded). 
+
+\begin{scriptsize}
+<<Study4.10, eval=TRUE, echo=TRUE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+load(paste(wdpath, "data/study4/IRTmodelCRAitemsFullBank.rdata", sep = ""))
+@
+\end{scriptsize}
+
+Then we load the data for the studies and trim the data frames to focus on the CRA items only. These data have previously be transformed to 1s and 0s to reflect correct or incorrect responses, respectively.
+
+\begin{scriptsize}
+<<Study4.11, eval=TRUE, echo=TRUE, results='markup', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+# Study 2
+load(paste(wdpath, "data/study2/CRAdataStudy2.rdata", sep = ""))
+CRAdataStudy2 <- subset(study2dataCRAonly, select = c(CRAitemNumbersStudy2))
+dim(CRAdataStudy2)
+# Recall that 63 items were left at the end of Study 2
+
+# Study 3
+load(paste(wdpath, "data/study3/CRAdataStudy3.rdata", sep = ""))
+CRAdataStudy3 <- subset(study3dataCRAonly, select = c(CRAitemNumbersStudy3))
+dim(CRAdataStudy3)
+# Recall that 66 items were left at the end of Study 3
+
+@
+\end{scriptsize}
+
+Now, use the IRT scoring function and IRT parameters to score the data for each study and then plot to compare the scores across samples.
+
+\begin{scriptsize}
+<<Study4.12, eval=TRUE, echo=TRUE, results='asis', fig.show='hide', tidy=FALSE, message=FALSE, warning=FALSE>>= 
+# Study 2
+CRAstudy2scores = score_ICAR_IRT(dataset = CRAdataStudy2, IRT_model = IRT_model_ICAR_CRA, t_score = FALSE)
+
+# Study 3
+CRAstudy3scores = score_ICAR_IRT(dataset = CRAdataStudy3, IRT_model = IRT_model_ICAR_CRA, t_score = FALSE)
+@
+\end{scriptsize}
+
+\begin{scriptsize}
+<<Study4.13, eval=TRUE, echo=TRUE, results='markup', tidy=FALSE, message=FALSE, warning=FALSE>>=
+file_path = paste(wdpath, "figure/comparesamples.png", sep = "")
+png(height=600, width=1200, file=file_path, type = "cairo")
+plot1 <- ggplot(CRAstudy2scores, aes(x=ICAR_CRA)) + 
+  geom_histogram(bins = 100) + labs(x="CRA IRT-based scores") + 
+  lims(x = c(-2,2), y = c(0,25)) 
+plot2 <- ggplot(CRAstudy3scores, aes(x=ICAR_CRA)) + 
+  geom_histogram(bins = 100) + labs(x="CRA IRT-based scores") + 
+  lims(x = c(-2,2), y = c(0,25)) 
+grid.arrange(plot1, plot2, ncol=2)
+dev.off()
+@
+\end{scriptsize}
+
+\begin{figure}
+\ffigbox{\includegraphics[width=.85\textwidth]{figure/comparesamples.png}}{\caption{Distribution of CRA scores in Study 2 (left) and Study 3 (right) based on IRT scores for the full item bank}\label{fig:distributions}}
+\end{figure}
+
+Figure \ref{fig:distributions} shows the distributions of IRT scores for the CRA scales in Studies 2 and 3. The undergraduate sample from Study 2 (the distribution on the left) has slight evidence of a floor effect but the scores are mainly distributed across the range of difficulty. The online sample from Study 3 has a restricted range on the high end, but a similarly broad range of scores overall. Though it is not possible to know what factors contribute to low scores in either sample, it seems very likely that low scores are influenced, at least in part, by low engagement with the CRA items. In sum, it appears that the IRT parameters of the CRA item bank provide a substantially wide range of scores in samples like those that are typically used in psychology research, without much restriction of range in either direction. In combination with the other aspects of reliability and validity evaluated in the prior studies, this provides strong evidence of the utility of the CRA item bank for the assessment of associative ability.
+
+\center{\textbf{FIN}}
+
+\clearpage
+
+\bibliographystyle{apacite}
+\bibliography{/Users/dmc174/Drive/resources/dmcCL.bib}
+
+\end{document}

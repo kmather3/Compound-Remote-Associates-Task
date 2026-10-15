@@ -1,0 +1,62 @@
+\usepackage[natbibapa]{apacite}
+
+\usepackage[colorlinks=true,citecolor=blue, linkcolor=blue, urlcolor=blue]{hyperref}
+\usepackage{indentfirst}
+\usepackage{pdfpages}
+\usepackage{soul}
+\usepackage{floatrow}
+\usepackage{pdflscape}
+\usepackage{longtable,ltcaption}
+\usepackage{geometry}
+\usepackage{afterpage}
+\usepackage{setspace}
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\singlespace}
+\usepackage{array}
+\usepackage{colortbl, xcolor}
+\usepackage{hanging}
+\usepackage{morefloats}
+\usepackage[justification=centering]{caption}
+\usepackage[notbib]{tocbibind} % notbib option will remove references from the TOC
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\usepackage{rotating}
+\usepackage{dcolumn}
+\usepackage[normalem]{ulem}
+\usepackage[hang,flushmargin]{footmisc}
+\usepackage{changepage}
+\RequirePackage{doi}
+\renewcommand{\doitext}{}
+\renewcommand{\doiprefix}{}
+
+\setlength{\topmargin}{-15mm}
+\setlength{\oddsidemargin}{-2mm}
+\setlength{\textwidth}{165mm}
+\setlength{\textheight}{220mm}
+\setlength\tabcolsep{3pt} 
+
+\newenvironment{blockquote}{
+  \par
+  \medskip
+  \leftskip=4em\rightskip=2em
+  \noindent\ignorespaces}{
+  \par\medskip}
+
+\newcommand\blfootnote[1]{
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}
+  \addtocounter{footnote}{-1}
+  \endgroup}
+
+\newcommand{\pkg}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\let\proglang=\textit
+\let\code=\texttt
+\renewcommand{\title}[1]{\begin{center}{\bf \Large #1}\end{center}}
+\newcommand{\affiliations}{\footnotesize}
+\newcommand{\keywords}{\paragraph{Keywords:}}
+
+\makeatletter
+\def\@xfootnote[#1]{
+  \protected@xdef\@thefnmark{#1}
+  \@footnotemark\@footnotetext}
+\makeatother
+
